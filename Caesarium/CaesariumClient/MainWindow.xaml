@@ -1,0 +1,27 @@
+﻿<Window x:Class="CaesariumClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="600" Width="900" HorizontalAlignment="Center" VerticalAlignment="Center"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Window.Background>
+        <ImageBrush ImageSource="images/caesaruim-bg-1.jpg"/>
+    </Window.Background>
+    <Grid VerticalAlignment="Top">
+        <ContentControl x:Name="contentControl" HorizontalAlignment="Left" VerticalAlignment="Top" Height="540" Width="890" Panel.ZIndex="-5" Margin="0,28,0,0">
+            <ContentControl.Background>
+                <ImageBrush ImageSource="images/caesaruim-bg-1.jpg" Stretch="UniformToFill"/>
+            </ContentControl.Background>
+        </ContentControl>
+        <Menu VerticalAlignment="Top" Height="23" Background="{x:Null}" HorizontalAlignment="Center" Opacity="1" Foreground="#FF3A63B9" FontWeight="Bold" Margin="50,0,0,0" >
+            <Menu.BorderBrush>
+                <ImageBrush/>
+            </Menu.BorderBrush>
+            <MenuItem x:Name="MainControlItem" Header="Main" Click="MenuItem_Click"/>
+            <MenuItem x:Name="AppControlItem" Header="Applications" Click="MenuItem_Click"/>
+            <MenuItem Header="Items Store"/>
+            <MenuItem Header="Characters"/>
+            <MenuItem Header="[Admin] Players"/>
+            <MenuItem Header="[Admin] Craft"/>
+        </Menu>
+    </Grid>
+</Window>

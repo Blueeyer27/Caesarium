@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caesarium", "Caesarium\Caes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaesariumServer", "CaesariumServer\CaesariumServer.csproj", "{251C0BA7-7246-4FCF-B365-1FFD9ED8E36A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaesariumClient", "CaesariumClient\CaesariumClient.csproj", "{626CE0F4-839C-4C3A-81DF-68406B76777D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{251C0BA7-7246-4FCF-B365-1FFD9ED8E36A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{251C0BA7-7246-4FCF-B365-1FFD9ED8E36A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{251C0BA7-7246-4FCF-B365-1FFD9ED8E36A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{626CE0F4-839C-4C3A-81DF-68406B76777D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{626CE0F4-839C-4C3A-81DF-68406B76777D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{626CE0F4-839C-4C3A-81DF-68406B76777D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{626CE0F4-839C-4C3A-81DF-68406B76777D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

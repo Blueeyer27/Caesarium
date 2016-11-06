@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -11,8 +11,8 @@ namespace CaesariumServer
 {
     public class ClientObject
     {
-        int x = 5;
-        int y = 5;
+        static int x = 100;
+        static int y = 200;
         public TcpClient client;
         public ClientObject(TcpClient tcpClient)
         {
@@ -39,40 +39,33 @@ namespace CaesariumServer
                     while (stream.DataAvailable);
 
                     string message = builder.ToString();
-                    string response = "Simple response";
+
                     if (message.Contains("Query:Left"))
                         if (x > 0)
                         {
-                            x--;
-                            response = "You moved left" + ": x =" + x + " y=" + y;
+                            x -= 10;
+
                         }
-                        else
-                            response = "You are too far left" + ": x =" + x + " y=" + y;
                     if (message.Contains("Query:Right"))
-                        if (x < 10)
+                        if (x < 500)
                         {
-                            x++;
-                            response = "You moved right" + ": x =" + x + " y=" + y;
+                            x += 10;
+
                         }
-                        else
-                            response = "You are too far right" + ": x =" + x + " y=" + y;
+
                     if (message.Contains("Query:Down"))
                         if (y > 0)
                         {
-                            y--;
-                            response = "You moved down" + ": x =" + x + " y=" + y;
-                        }
-                        else
-                            response = "You are at bottom" + ": x =" + x + " y=" + y;
-                    if (message.Contains("Query:Top"))
-                        if (x < 10)
-                        {
-                            y++;
-                            response = "You moved to top" + ": x =" + x + " y=" + y;
-                        }
-                        else
-                            response = "You are too far at top" + ": x =" + x + " y=" + y;
+                            y -= 10;
 
+                        }
+                    if (message.Contains("Query:Top"))
+                        if (y < 500)
+                        {
+                            y += 10;
+
+                        }
+                    string response = x + ":" + y;
 
                     Console.WriteLine(message);
                     Console.WriteLine(response);
@@ -95,10 +88,10 @@ namespace CaesariumServer
             }
         }
     }
+
     class Program
     {
-
-        const int port = 8888;
+        const int port = 20012;
         static TcpListener listener;
         static void Main(string[] args)
         {

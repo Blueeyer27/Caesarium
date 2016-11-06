@@ -1,3 +1,4 @@
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,6 +96,16 @@ namespace CaesariumServer
         static TcpListener listener;
         static void Main(string[] args)
         {
+            CaesariumDatabase.Create();
+            //string connStr = "server=localhost;user=root;port=3306;password=qwerty11;";
+            //using (var conn = new MySqlConnection(connStr))
+            //using (var cmd = conn.CreateCommand())
+            //{
+            //    conn.Open();
+            //    cmd.CommandText = "CREATE DATABASE IF NOT EXISTS `hello`;";
+            //    cmd.ExecuteNonQuery();
+            //}
+
             try
             {
                 listener = new TcpListener(IPAddress.Parse("127.0.0.1"), port);

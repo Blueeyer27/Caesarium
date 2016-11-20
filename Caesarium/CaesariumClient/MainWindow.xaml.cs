@@ -47,7 +47,8 @@ namespace CaesariumClient
             controls = new Dictionary<String, Control>();
             controls.Add("MainControlItem", new MainControl());
             controls.Add("LoginControlItem", new LoginControl());
-            controls.Add("AppControlItem", new AppsControl());
+            //controls.Add("AppControlItem", new AppsControl());
+            controls.Add("AppControlItem", new BattleControl());
             controls.Add("StoreControlItem", new StoreControl());
         }
     }

@@ -57,6 +57,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\BattleControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\LoginControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -79,6 +83,9 @@
     </Compile>
     <Compile Include="Controls\AppsControl.xaml.cs">
       <DependentUpon>AppsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\BattleControl.xaml.cs">
+      <DependentUpon>BattleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\LoginControl.xaml.cs">
       <DependentUpon>LoginControl.xaml</DependentUpon>
@@ -123,6 +130,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\caesaruim-bg-1.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Textures\grass-texture.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -29,17 +29,17 @@ namespace CaesariumClient
             InitializeControls();
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            contentControl.Content = new MainControl();
-        }
-
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             var item = (MenuItem)sender;
 
             if (controls.ContainsKey(item.Name))
+            {
                 contentControl.Content = controls[item.Name];
+
+                if (item.Name != "AppControlItem")
+                    this.KeyDown -= ((BattleControl)controls["AppControlItem"]).contentControl_KeyDown;
+            }
         }
 
         private void InitializeControls()

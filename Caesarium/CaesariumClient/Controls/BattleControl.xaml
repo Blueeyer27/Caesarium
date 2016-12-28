@@ -6,7 +6,12 @@
              mc:Ignorable="d" 
              d:DesignHeight="540" d:DesignWidth="890" Background="Green">
     <Grid>
+        <ContentControl x:Name="contentControl" Background="Red" HorizontalAlignment="Left" VerticalAlignment="Top" Height="540" Width="890" Panel.ZIndex="99999999" RenderTransformOrigin="0.686,0.205" KeyDown="contentControl_KeyDown" Loaded="contentControl_Loaded">
+            <!--<ContentControl.Background>
+                <ImageBrush ImageSource="../images/caesaruim-bg-1.jpg" Stretch="UniformToFill" Opacity="0.5"/>
+            </ContentControl.Background>-->
+        </ContentControl>
         <Grid x:Name="battleFieldGrid" Margin="0,0,0,0" HorizontalAlignment="Stretch" 
-              VerticalAlignment="Stretch" Loaded="battleFieldGrid_Loaded"/>
+              VerticalAlignment="Stretch" Loaded="battleFieldGrid_Loaded" Panel.ZIndex="-6"/>
     </Grid>
 </UserControl>

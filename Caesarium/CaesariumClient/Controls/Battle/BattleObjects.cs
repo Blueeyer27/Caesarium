@@ -1,0 +1,57 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+
+namespace CaesariumClient.Controls
+{
+    public partial class BattleControl : UserControl
+    {
+        Grid objectFieldGrid = new Grid();
+
+        private void AddBattleObject(int x, int y, Image obj) {
+            Grid.SetColumn(obj, x);
+            Grid.SetRow(obj, y);
+            battleFieldGrid.Children.Add(obj);
+        }
+
+        private void MoveBattleObject(int x, int y, Image obj)
+        {
+            Grid.SetColumn(obj, x);
+            Grid.SetRow(obj, y);
+        }
+
+        private void RemoveBattleObject(Image obj) {
+            battleFieldGrid.Children.Remove(obj);
+        }
+
+        private void InitializeBattleObjects()
+        {
+            
+            //objectFieldGrid.
+            objectsField = new UserControl();
+            objectsField.Content = objectFieldGrid;
+
+            for (var i = 0; i < 60; i++)
+            {
+                var colDef = new ColumnDefinition();
+                colDef.Width = new GridLength(1, GridUnitType.Star);
+                objectFieldGrid.ColumnDefinitions.Add(colDef);
+            }
+
+            for (var i = 35; i >= 0; i--)
+            {
+                var rowDef = new RowDefinition();
+                rowDef.Height = new GridLength(1, GridUnitType.Star);
+                objectFieldGrid.RowDefinitions.Add(rowDef);
+            }
+
+            contentControl.Content = objectsField;
+            //objectFieldGrid.ShowGridLines = true;
+        }
+    }
+}

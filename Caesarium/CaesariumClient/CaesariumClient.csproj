@@ -84,6 +84,8 @@
     <Compile Include="Controls\AppsControl.xaml.cs">
       <DependentUpon>AppsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Battle\BattleField.cs" />
+    <Compile Include="Controls\Battle\BattleObjects.cs" />
     <Compile Include="Controls\BattleControl.xaml.cs">
       <DependentUpon>BattleControl.xaml</DependentUpon>
     </Compile>
@@ -133,6 +135,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Textures\grass-texture.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Objects\admin.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Objects\BlackMage.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

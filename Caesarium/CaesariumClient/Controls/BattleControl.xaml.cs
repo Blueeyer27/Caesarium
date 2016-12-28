@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,51 +21,66 @@ namespace CaesariumClient.Controls
     /// </summary>
     public partial class BattleControl : UserControl
     {
+        Image player;
+        int x = 1, y = 1;
+
+        UserControl objectsField;
         public BattleControl()
         {
             InitializeComponent();
+            InitializeBattleField();
+            InitializeBattleObjects();
+
+            player = CreateObjectImage(@"\Images\Objects\admin.gif");
+
+            //player.Stretch = Stretch.None;
+
+            AddBattleObject(x, y, player);
         }
 
         private void battleFieldGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            for (var i = 0; i < 20; i++)
-            {
-                var colDef = new ColumnDefinition();
-                colDef.Width = new GridLength(1, GridUnitType.Star);
-                battleFieldGrid.ColumnDefinitions.Add(colDef);
-            }
 
-            for (var i = 0; i < 12; i++)
-            {
-                var rowDef = new RowDefinition();
-                rowDef.Height = new GridLength(1, GridUnitType.Star);
-                battleFieldGrid.RowDefinitions.Add(rowDef);
-            }
-
-            //battleFieldGrid.Background = new ImageBrush((BitmapImage)CreateImage().Source);
-
-            for (var i = 0; i < 20; i++)
-                for (var j = 0; j < 12; j++)
-                {
-                    var grassImg = CreateImage();
-
-
-                    Grid.SetColumn(grassImg, i);
-                    Grid.SetRow(grassImg, j);
-
-                    battleFieldGrid.Children.Add(grassImg);
-                }
-
-            //battleFieldGrid.ShowGridLines = true;
-            //battleFieldGrid.ColumnDefinitions.Add(new ColumnDefinition().);
         }
 
-        private Image CreateImage()
+        private Image CreateObjectImage(string uri)
         {
+            var dir = Directory.GetCurrentDirectory();
             Image Mole = new Image();
-            ImageSource MoleImage = new BitmapImage(new Uri(@"C:\Users\Anton\Source\GitRepos\Caesarium_Main\Caesarium\CaesariumClient\Images\Textures\grass-texture.jpg", UriKind.Absolute));
+            ImageSource MoleImage = new BitmapImage(new Uri(uri, UriKind.Relative));
             Mole.Source = MoleImage;
+            
             return Mole;
+        }
+
+        private void contentControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow(this);
+            window.KeyDown += contentControl_KeyDown;
+        }
+
+        //string moves = "";
+        public void contentControl_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.W)
+            {
+                //moves += "w";
+                MoveBattleObject(x, --y, player);
+            }
+            if (e.Key == Key.S)
+            {
+                MoveBattleObject(x, ++y, player);
+            }
+            if (e.Key == Key.D)
+            {
+                //player.Source = new BitmapImage(new Uri(@"\Images\Textures\grass-texture.jpg", UriKind.Relative));
+                MoveBattleObject(++x, y, player);
+            }
+            if (e.Key == Key.A)
+            {
+                //player.Source = new BitmapImage(new Uri(@"\Images\Objects\admin.gif", UriKind.Relative));
+                MoveBattleObject(--x, y, player);
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ using CaesariumClient.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,17 +17,28 @@ using System.Windows.Shapes;
 
 namespace CaesariumClient
 {
+    public static class ServerConnect
+    {
+        public static TcpClient client;
+        public static NetworkStream stream;
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
         Dictionary<String, Control> controls;
+        const int port = 20012;
+        const string address = "127.0.0.1";
 
         public MainWindow()
         {
             InitializeComponent();
             InitializeControls();
+
+            ServerConnect.client = new TcpClient(address, port);
+            ServerConnect.stream = ServerConnect.client.GetStream();
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)

@@ -16,17 +16,22 @@ namespace CaesariumClient.Controls
         private void AddBattleObject(int x, int y, Image obj) {
             Grid.SetColumn(obj, x);
             Grid.SetRow(obj, y);
-            battleFieldGrid.Children.Add(obj);
+            objectFieldGrid.Children.Add(obj);
         }
 
         private void MoveBattleObject(int x, int y, Image obj)
         {
-            Grid.SetColumn(obj, x);
-            Grid.SetRow(obj, y);
+            //Grid.SetColumn(obj, x);
+            //Grid.SetRow(obj, y);
+            
+            var margin = obj.Margin;
+            margin.Left += x;
+            margin.Top += y;
+            obj.Margin = margin;
         }
 
         private void RemoveBattleObject(Image obj) {
-            battleFieldGrid.Children.Remove(obj);
+            objectFieldGrid.Children.Remove(obj);
         }
 
         private void InitializeBattleObjects()
@@ -36,14 +41,14 @@ namespace CaesariumClient.Controls
             objectsField = new UserControl();
             objectsField.Content = objectFieldGrid;
 
-            for (var i = 0; i < 60; i++)
+            for (var i = 0; i < 1; i++)
             {
                 var colDef = new ColumnDefinition();
                 colDef.Width = new GridLength(1, GridUnitType.Star);
                 objectFieldGrid.ColumnDefinitions.Add(colDef);
             }
 
-            for (var i = 35; i >= 0; i--)
+            for (var i = 0; i >= 0; i--)
             {
                 var rowDef = new RowDefinition();
                 rowDef.Height = new GridLength(1, GridUnitType.Star);
@@ -51,7 +56,7 @@ namespace CaesariumClient.Controls
             }
 
             contentControl.Content = objectsField;
-            //objectFieldGrid.ShowGridLines = true;
+            objectFieldGrid.ClipToBounds = true;
         }
     }
 }

@@ -1,3 +1,4 @@
+using CaesariumClient.Controls.Battle;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,10 +24,7 @@ namespace CaesariumClient.Controls
     /// </summary>
     public partial class BattleControl : UserControl
     {
-        BackgroundWorker bw;
-
-        Image player;
-        Image player1;
+        List<PlayerInstance> players = new List<PlayerInstance>();
 
         Dictionary<string, bool> moveKeys = new Dictionary<string, bool>();
 
@@ -39,9 +37,8 @@ namespace CaesariumClient.Controls
             InitializeBattleField();
             InitializeBattleObjects();
 
-            bw = new BackgroundWorker();
-            this.bw.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bw_RunWorkerCompleted);
-			
+            players.Add(new PlayerInstance(new Image()));
+            players.Add(new PlayerInstance(new Image()));
 
             moveKeys.Add("A", false);
             moveKeys.Add("S", false);
@@ -52,13 +49,13 @@ namespace CaesariumClient.Controls
             moveKeys.Add("K", false);
             moveKeys.Add("L", false);
 
-            player = CreateObjectImage(@"\Images\Objects\admin.gif", 45, 45);
-            player1 = CreateObjectImage(@"\Images\Objects\DD2_Warrior_Sprite.png", 45, 45);
+            players[0].Sprite = CreateObjectImage(@"\Images\Objects\admin.gif", 45, 45);
+            players[1].Sprite = CreateObjectImage(@"\Images\Objects\DD2_Warrior_Sprite.png", 45, 45);
 
             //player.Stretch = Stretch.None;
 
-            AddBattleObject(0, 0, player);
-            AddBattleObject(0, 0, player1);
+            AddBattleObject(0, 0, players[0].Sprite);
+            AddBattleObject(0, 0, players[1].Sprite);
         }
 
         private void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -110,21 +107,15 @@ namespace CaesariumClient.Controls
                 moveKeys[e.Key.ToString()] = true;
         }
 
-        private void MakeAsyncMove(object state)
-        {
-            this.bw.RunWorkerAsync();
-        }
-
         private string makeMovesQuery;
         private void MakeMove(object sender, EventArgs e)
         {
+            RefreshFieldObjects();
+
             makeMovesQuery = "";
             foreach (var key in moveKeys)
             {
-                if (key.Value)
-                {
-                    makeMovesQuery += key.Key;
-                }
+                if (key.Value) makeMovesQuery += key.Key;
             }
 
             if (makeMovesQuery.Length < 1) return;
@@ -133,6 +124,41 @@ namespace CaesariumClient.Controls
             byte[] data = Encoding.Unicode.GetBytes(makeMovesQuery);
             ServerConnect.stream.Write(data, 0, data.Length);
             makeMovesQuery = "";
+        }
+
+        private void RefreshFieldObjects()
+        {
+            //TODO: getFieldObjects:0 !!!
+            byte[] data = Encoding.Unicode.GetBytes("getFieldObjects:0");
+            ServerConnect.stream.Write(data, 0, data.Length);
+
+            //TODO:
+            string positions = ReadServerAnswer();
+            if (positions.Length > 0)
+            {
+                var posData = positions.Split(new char[] { ':', '{', '}' }, StringSplitOptions.RemoveEmptyEntries);
+
+                var player = players[int.Parse(posData[0])];
+                MoveBattleObject(int.Parse(posData[1]), int.Parse(posData[2]), player.Sprite);
+
+                player = players[int.Parse(posData[3])];
+                MoveBattleObject(int.Parse(posData[4]), int.Parse(posData[5]), player.Sprite);
+            }
+        }
+
+        private string ReadServerAnswer()
+        {
+            byte[] data = new byte[512];
+            StringBuilder builder = new StringBuilder("");
+            int bytes = 0;
+
+            while (ServerConnect.stream.DataAvailable)
+            {
+                bytes = ServerConnect.stream.Read(data, 0, data.Length);
+                builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
+            } 
+
+            return builder.ToString();
         }
     }
 }

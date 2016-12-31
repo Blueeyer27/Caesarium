@@ -14,7 +14,8 @@ namespace CaesariumServer
     {
         const int port = 20012;
         static TcpListener listener;
-
+        static List<Game> games = new List<Game>();
+        
 
         static void Main(string[] args)
         {
@@ -34,12 +35,35 @@ namespace CaesariumServer
                 listener.Start();
                 Console.WriteLine("Waiting for connections...");
 
+                games.Add(new Game(new BattleField(), 4));
+                
                 while (true)
                 {
                     GameClient client = new GameClient(listener.AcceptTcpClient());
+
+                    if (games[games.Count - 1].Clients.Count < games[games.Count - 1].MaxPlayers)
+                    {
+                        games[games.Count - 1].Clients.Add(client);
+                        client.SetCurrentGame(games[games.Count - 1]);
+                    }
+                    else
+                    {
+                        BattleField newField = new BattleField();
+                        var game = new Game(newField);
+
+                        //TODO: let Game do this itself
+                        client.SetCurrentGame(game);
+                        game.Clients.Add(client);
+
+
+                        games.Add(game);
+                    }
+
+                    client.InitPlayers();
                     client.ClientThread = new Thread(new ThreadStart(client.Process));
 
                     client.ClientThread.Start();
+
                 }
             }
             catch (Exception ex)
@@ -54,10 +78,24 @@ namespace CaesariumServer
         }
     }
 
-    class GameClient
+    public class Game
+    {
+        public int MaxPlayers { get; set; } //TODO:
+        public BattleField gameField;
+        public List<GameClient> Clients = new List<GameClient>();
+
+        public Game(BattleField field, int maxPlayers = 2)
+        {
+            MaxPlayers = maxPlayers;
+            gameField = field;
+        }
+    }
+
+    public class GameClient
     {
         public Thread ClientThread { get; set; }
         List<PlayerInstance> Players;
+        Game currGame;
 
         public TcpClient client;
 
@@ -66,6 +104,11 @@ namespace CaesariumServer
             this.client = client;
 
             Players = new List<PlayerInstance>();
+        }
+
+        public void SetCurrentGame(Game currGame)
+        {
+            this.currGame = currGame;
         }
 
         public void InitPlayers() {
@@ -100,12 +143,31 @@ namespace CaesariumServer
 
                     //string response = x + ":" + y;
 
-                    Console.WriteLine("\n Function: " + func + " Arguments: " + args);
+                    //Console.WriteLine("\n Function: " + func + " Arguments: " + args);
                     //Console.WriteLine(response);
                     // sending response
 
-                    //data = Encoding.Unicode.GetBytes(response);
-                    //stream.Write(data, 0, data.Length);
+                    var response = "";
+
+                    if (func == "MakeMove")
+                    {
+                        MakeMove(args);
+                    }
+                    else if (func == "getFieldObjects")
+                    {
+                        //TODO: REMOVE THIS!!!!!!! 
+                        int id = 0;
+                        var firstClient = currGame.Clients[0].Players;
+                        foreach (var player in firstClient)
+                        {
+                            response += id + "{" + player.X + ":" + player.Y + "}";
+                            id++;
+                        }
+
+                        //Console.WriteLine(response);
+                        data = Encoding.Unicode.GetBytes(response);
+                        stream.Write(data, 0, data.Length);
+                    } 
                 }
             }
             catch (Exception ex)
@@ -119,6 +181,43 @@ namespace CaesariumServer
                 if (client != null)
                     client.Close();
             }
+        }
+
+        private void MakeMove(string args)
+        {
+            var step = 5;
+
+            foreach (var ch in args)
+            {
+                switch (ch)
+                {
+                    case 'W':
+                        Players[0].Y -= step;
+                        break;
+                    case 'I':
+                        Players[1].Y -= step;
+                        break;
+                    case 'A':
+                        Players[0].X -= step;
+                        break;
+                    case 'J':
+                        Players[1].X -= step;
+                        break;
+                    case 'S':
+                        Players[0].Y += step;
+                        break;
+                    case 'K':
+                        Players[1].Y += step;
+                        break;
+                    case 'D':
+                        Players[0].X += step;
+                        break;
+                    case 'L':
+                        Players[1].X += step;
+                        break;
+                }
+            }
+
         }
     }
 }

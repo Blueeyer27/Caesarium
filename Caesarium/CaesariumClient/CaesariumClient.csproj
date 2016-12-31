@@ -89,6 +89,7 @@
     <Compile Include="Controls\BattleControl.xaml.cs">
       <DependentUpon>BattleControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Battle\PlayerInstance.cs" />
     <Compile Include="Controls\LoginControl.xaml.cs">
       <DependentUpon>LoginControl.xaml</DependentUpon>
     </Compile>

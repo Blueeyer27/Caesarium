@@ -8,6 +8,11 @@ namespace CaesariumServer
 {
     public class BattleField
     {
+        int step = 8;
 
+        public BattleField()
+        {
+
+        }
     }
 }

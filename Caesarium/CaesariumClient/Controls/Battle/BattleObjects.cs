@@ -25,8 +25,8 @@ namespace CaesariumClient.Controls
             //Grid.SetRow(obj, y);
             
             var margin = obj.Margin;
-            margin.Left += x;
-            margin.Top += y;
+            margin.Left = x;
+            margin.Top = y;
             obj.Margin = margin;
         }
 

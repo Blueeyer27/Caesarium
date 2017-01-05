@@ -39,6 +39,8 @@ namespace CaesariumClient.Controls
 
             players.Add(new PlayerInstance(new Image()));
             players.Add(new PlayerInstance(new Image()));
+            players.Add(new PlayerInstance(new Image()));
+            players.Add(new PlayerInstance(new Image()));
 
             moveKeys.Add("A", false);
             moveKeys.Add("S", false);
@@ -51,11 +53,15 @@ namespace CaesariumClient.Controls
 
             players[0].Sprite = CreateObjectImage(@"\Images\Objects\admin.gif", 45, 45);
             players[1].Sprite = CreateObjectImage(@"\Images\Objects\DD2_Warrior_Sprite.png", 45, 45);
+            players[2].Sprite = CreateObjectImage(@"\Images\Objects\admin.gif", 45, 45);
+            players[3].Sprite = CreateObjectImage(@"\Images\Objects\DD2_Warrior_Sprite.png", 45, 45);
 
             //player.Stretch = Stretch.None;
 
             AddBattleObject(0, 0, players[0].Sprite);
             AddBattleObject(0, 0, players[1].Sprite);
+            AddBattleObject(0, 0, players[2].Sprite);
+            AddBattleObject(0, 0, players[3].Sprite);
         }
 
         private void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -138,11 +144,13 @@ namespace CaesariumClient.Controls
             {
                 var posData = positions.Split(new char[] { ':', '/' }, StringSplitOptions.RemoveEmptyEntries);
 
-                var player = players[0];
-                MoveBattleObject(int.Parse(posData[0]), int.Parse(posData[1]), player.Sprite);
-
-                player = players[1];
-                MoveBattleObject(int.Parse(posData[2]), int.Parse(posData[3]), player.Sprite);
+                var i = 0;
+                foreach (var player in players)
+                {
+                    if (posData.Length <= i) break;
+                    MoveBattleObject(int.Parse(posData[i]), int.Parse(posData[i + 1]), player.Sprite);
+                    i+=2;
+                }
             }
         }
 

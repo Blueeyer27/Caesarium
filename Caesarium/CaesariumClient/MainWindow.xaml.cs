@@ -2,6 +2,7 @@ using CaesariumClient.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,7 +30,7 @@ namespace CaesariumClient
     public partial class MainWindow : Window
     {
         Dictionary<String, Control> controls;
-        const int port = 20012;
+        const int port = 6112;
         const string address = "127.0.0.1";
 
         public MainWindow()
@@ -37,7 +38,8 @@ namespace CaesariumClient
             InitializeComponent();
             InitializeControls();
 
-            ServerConnect.client = new TcpClient(address, port);
+            ServerConnect.client = new TcpClient();
+            ServerConnect.client.Connect(new IPEndPoint(IPAddress.Parse(address), port));
             ServerConnect.stream = ServerConnect.client.GetStream();
         }
 

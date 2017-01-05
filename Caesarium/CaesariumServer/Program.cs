@@ -12,7 +12,7 @@ namespace CaesariumServer
 {
     class Program
     {
-        const int port = 20012;
+        const int port = 6112;
         static TcpListener listener;
         static List<Game> games = new List<Game>();
         
@@ -31,7 +31,8 @@ namespace CaesariumServer
 
             try
             {
-                listener = new TcpListener(IPAddress.Parse("127.0.0.1"), port);
+                //listener = new TcpListener(IPAddress.Parse("87.110.165.82"), port);
+                listener = new TcpListener(new IPEndPoint(IPAddress.Any, port));
                 listener.Start();
                 Console.WriteLine("Waiting for connections...");
 
@@ -69,6 +70,7 @@ namespace CaesariumServer
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                Console.ReadKey();
             }
             finally
             {
@@ -113,13 +115,14 @@ namespace CaesariumServer
 
         public void InitPlayers() {
             if (Players.Count == 0){
-                Players.Add(new PlayerInstance("Anton"));
+                Players.Add(new PlayerInstance("Antowa"));
                 Players.Add(new PlayerInstance("Anton"));
             }
         }
 
         public void Process()
         {
+            var prevResponse = "";
             NetworkStream stream = null;
             try
             {
@@ -156,14 +159,19 @@ namespace CaesariumServer
                     else if (func == "getObj")
                     {
                         //TODO: REMOVE THIS!!!!!!! 
-                        var firstClient = currGame.Clients[0].Players;
-                        foreach (var player in firstClient)
+                        foreach (var gameClient in currGame.Clients)
                         {
-                            responseSb.Append(player.X + ":" + player.Y + "/");
+                            foreach (var player in gameClient.Players)
+                            {
+                                responseSb.Append(player.X + ":" + player.Y + "/");
+                            }
                         }
 
-                        //Console.WriteLine(response);
-                        data = Encoding.Unicode.GetBytes(responseSb.ToString());
+                        if (prevResponse == responseSb.ToString()) continue;
+
+                        prevResponse = responseSb.ToString();
+                        Console.WriteLine(prevResponse);
+                        data = Encoding.Unicode.GetBytes(prevResponse);
                         stream.Write(data, 0, data.Length);
                     } 
                 }

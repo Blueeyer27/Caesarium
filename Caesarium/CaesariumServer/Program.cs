@@ -137,8 +137,10 @@ namespace CaesariumServer
                 stream = client.GetStream();
                 StringBuilder builder = new StringBuilder();
 
+                var counter = 0;
                 while (true)
                 {
+                    counter++;
                     // Getting message
                     builder.Clear();
                     byte[] data = new byte[64]; // data buffer;
@@ -157,23 +159,23 @@ namespace CaesariumServer
 
                     //string response = x + ":" + y;
 
-                    //Console.WriteLine("\n Function: " + func + " Arguments: " + args);
+                    Console.WriteLine("\n Function: " + func + " Arguments: " + args);
                     //Console.WriteLine(response);
                     // sending response
 
                     var responseSb = new StringBuilder("");
 
-                    if (func == "move")
+                    if (func == "action")
                     {
                         TimeSpan span = DateTime.Now - lastReq;
-                        if (span.TotalMilliseconds < 50)
+                        if (span.TotalMilliseconds < 5)
                         {
                             data = Encoding.Unicode.GetBytes(" ");
                             stream.Write(data, 0, data.Length);
                             continue;
                         }
 
-                        Console.WriteLine(id + "  " + args);
+                        Console.WriteLine(id + "  " + counter);
                         lastReq = DateTime.Now;
 
                         MakeMove(args);
@@ -210,12 +212,13 @@ namespace CaesariumServer
 
         private void MakeMove(string args)
         {
-            var step = 5;
+            var step = 8;
 
             foreach (var ch in args)
             {
                 switch (ch)
                 {
+                    //Moves
                     case 'W':
                         Players[0].Y -= step;
                         break;
@@ -239,6 +242,15 @@ namespace CaesariumServer
                         break;
                     case 'L':
                         Players[1].X += step;
+                        break;
+                    //Skills
+                    case 'Q':
+                        break;
+                    case 'E':
+                        break;
+                    case 'U':
+                        break;
+                    case 'O':
                         break;
                 }
             }

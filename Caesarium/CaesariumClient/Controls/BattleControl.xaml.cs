@@ -26,7 +26,7 @@ namespace CaesariumClient.Controls
     {
         List<PlayerInstance> players = new List<PlayerInstance>();
 
-        Dictionary<string, bool> moveKeys = new Dictionary<string, bool>();
+        Dictionary<string, bool> actionKeys = new Dictionary<string, bool>();
 
         int step = 8;
 
@@ -36,25 +36,21 @@ namespace CaesariumClient.Controls
             InitializeComponent();
             InitializeBattleField();
             InitializeBattleObjects();
+            InitializeKeys();
 
             players.Add(new PlayerInstance(new Image()));
             players.Add(new PlayerInstance(new Image()));
             players.Add(new PlayerInstance(new Image()));
             players.Add(new PlayerInstance(new Image()));
 
-            moveKeys.Add("A", false);
-            moveKeys.Add("S", false);
-            moveKeys.Add("D", false);
-            moveKeys.Add("W", false);
-            moveKeys.Add("I", false);
-            moveKeys.Add("J", false);
-            moveKeys.Add("K", false);
-            moveKeys.Add("L", false);
+            
 
             players[0].Sprite = CreateObjectImage(@"\Images\Objects\admin.gif", 45, 45);
             players[2].Sprite = CreateObjectImage(@"\Images\Objects\DD2_Warrior_Sprite.png", 45, 45);
             players[1].Sprite = CreateObjectImage(@"\Images\Objects\admin.gif", 45, 45);
             players[3].Sprite = CreateObjectImage(@"\Images\Objects\DD2_Warrior_Sprite.png", 45, 45);
+
+            players[0].Lightning = CreateObjectImage(@"\Images\Skills\lightning.gif", 80, 400);
 
             //player.Stretch = Stretch.None;
 
@@ -62,6 +58,23 @@ namespace CaesariumClient.Controls
             AddBattleObject(0, 0, players[1].Sprite);
             AddBattleObject(0, 0, players[2].Sprite);
             AddBattleObject(0, 0, players[3].Sprite);
+        }
+
+        private void InitializeKeys()
+        {
+            actionKeys.Add("A", false);
+            actionKeys.Add("S", false);
+            actionKeys.Add("D", false);
+            actionKeys.Add("W", false);
+            actionKeys.Add("I", false);
+            actionKeys.Add("J", false);
+            actionKeys.Add("K", false);
+            actionKeys.Add("L", false);
+
+            actionKeys.Add("Q", false);
+            actionKeys.Add("E", false);
+            actionKeys.Add("U", false);
+            actionKeys.Add("O", false);
         }
 
         private void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -73,8 +86,8 @@ namespace CaesariumClient.Controls
         {
             //Timer timer = new Timer(MakeAsyncMove, null, 0, 100);
             System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
-            dispatcherTimer.Tick += new EventHandler(MakeMove);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+            dispatcherTimer.Tick += new EventHandler(MakeAction);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             dispatcherTimer.Start();
         }
 
@@ -103,43 +116,46 @@ namespace CaesariumClient.Controls
 
         private void contentControl_KeyUp(object sender, KeyEventArgs e)
         {
-            if (moveKeys.ContainsKey(e.Key.ToString()))
-                moveKeys[e.Key.ToString()] = false;
+            if (actionKeys.ContainsKey(e.Key.ToString()))
+                actionKeys[e.Key.ToString()] = false;
         }
 
         public void contentControl_KeyDown(object sender, KeyEventArgs e)
         {
-            if (moveKeys.ContainsKey(e.Key.ToString()))
-                moveKeys[e.Key.ToString()] = true;
+            if (actionKeys.ContainsKey(e.Key.ToString()))
+                actionKeys[e.Key.ToString()] = true;
+
+            switch (e.Key)
+            {
+                case Key.Q:
+                    RemoveBattleObject(players[0].Lightning);
+                    players[0].Lightning.RenderTransform = new RotateTransform(45);
+                    AddBattleObject(players[0].x, players[0].y, players[0].Lightning);
+                    break;
+                case Key.E:
+                    RemoveBattleObject(players[0].Lightning);
+                    players[0].Lightning.RenderTransform = new RotateTransform(90);
+                    AddBattleObject(players[0].x, players[0].y, players[0].Lightning);
+                    break;
+            }
         }
 
-        private void MakeMove(object sender, EventArgs e)
+        private void MakeAction(object sender, EventArgs e)
         {
             RefreshFieldObjects();
 
             StringBuilder makeMovesSb = new StringBuilder("");
-            foreach (var key in moveKeys)
+            foreach (var key in actionKeys)
             {
                 if (key.Value) makeMovesSb.Append(key.Key);
             }
 
             if (makeMovesSb.Length < 1) return;
 
-            makeMovesSb.Insert(0, "move:");
+            makeMovesSb.Insert(0, "action:");
             makeMovesSb.Append(";");
             //makeMovesQuery = "MakeMove:" + makeMovesQuery;
             byte[] data = Encoding.Unicode.GetBytes(makeMovesSb.ToString());
-            ServerConnect.stream.Write(data, 0, data.Length);
-            ServerConnect.stream.Write(data, 0, data.Length);
-            ServerConnect.stream.Write(data, 0, data.Length);
-            ServerConnect.stream.Write(data, 0, data.Length);
-            ServerConnect.stream.Write(data, 0, data.Length);
-            ServerConnect.stream.Write(data, 0, data.Length);
-
-            ServerConnect.stream.Write(data, 0, data.Length);
-            ServerConnect.stream.Write(data, 0, data.Length);
-            ServerConnect.stream.Write(data, 0, data.Length);
-            ServerConnect.stream.Write(data, 0, data.Length);
             ServerConnect.stream.Write(data, 0, data.Length);
         }
 
@@ -157,7 +173,9 @@ namespace CaesariumClient.Controls
                 foreach (var player in players)
                 {
                     if (posData.Length <= i) break;
-                    MoveBattleObject(int.Parse(posData[i]), int.Parse(posData[i + 1]), player.Sprite);
+                    player.x = int.Parse(posData[i]);
+                    player.y = int.Parse(posData[i + 1]);
+                    MoveBattleObject(player.x, player.y, player.Sprite);
                     i += 2;
                 }
             }

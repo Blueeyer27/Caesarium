@@ -14,8 +14,14 @@ namespace CaesariumClient.Controls
         Grid objectFieldGrid = new Grid();
 
         private void AddBattleObject(int x, int y, Image obj) {
-            Grid.SetColumn(obj, x);
-            Grid.SetRow(obj, y);
+            Grid.SetColumn(obj, 0);
+            Grid.SetRow(obj, 0);
+
+            var margin = obj.Margin;
+            margin.Left = x;
+            margin.Top = y;
+            obj.Margin = margin;
+
             objectFieldGrid.Children.Add(obj);
         }
 

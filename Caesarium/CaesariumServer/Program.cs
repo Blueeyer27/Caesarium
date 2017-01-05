@@ -15,7 +15,7 @@ namespace CaesariumServer
         const int port = 6112;
         static TcpListener listener;
         static List<Game> games = new List<Game>();
-        
+
 
         static void Main(string[] args)
         {
@@ -37,10 +37,12 @@ namespace CaesariumServer
                 Console.WriteLine("Waiting for connections...");
 
                 games.Add(new Game(new BattleField(), 4));
-                
+
+                int id = 0;
                 while (true)
                 {
-                    GameClient client = new GameClient(listener.AcceptTcpClient());
+                    GameClient client = new GameClient(listener.AcceptTcpClient(), id);
+                    id++;
 
                     if (games[games.Count - 1].Clients.Count < games[games.Count - 1].MaxPlayers)
                     {
@@ -100,10 +102,13 @@ namespace CaesariumServer
         Game currGame;
 
         public TcpClient client;
+        public int id;
 
-        public GameClient(TcpClient client)
+        public GameClient(TcpClient client, int id)
         {
+            this.id = id;
             this.client = client;
+            
 
             Players = new List<PlayerInstance>();
         }
@@ -113,8 +118,10 @@ namespace CaesariumServer
             this.currGame = currGame;
         }
 
-        public void InitPlayers() {
-            if (Players.Count == 0){
+        public void InitPlayers()
+        {
+            if (Players.Count == 0)
+            {
                 Players.Add(new PlayerInstance("Antowa"));
                 Players.Add(new PlayerInstance("Anton"));
             }
@@ -122,16 +129,19 @@ namespace CaesariumServer
 
         public void Process()
         {
-            var prevResponse = "";
+            DateTime lastReq = DateTime.Now;
+
             NetworkStream stream = null;
             try
             {
                 stream = client.GetStream();
                 byte[] data = new byte[64]; // data buffer;
+                StringBuilder builder = new StringBuilder();
+
                 while (true)
                 {
                     // Getting message
-                    StringBuilder builder = new StringBuilder();
+                    builder.Clear();
                     int bytes = 0;
                     do
                     {
@@ -154,26 +164,34 @@ namespace CaesariumServer
 
                     if (func == "move")
                     {
+                        TimeSpan span = DateTime.Now - lastReq;
+                        if (span.TotalMilliseconds < 2000)
+                        {
+                            data = Encoding.Unicode.GetBytes(" ");
+                            stream.Write(data, 0, data.Length);
+                            continue;
+                        }
+
+                        Console.WriteLine(id + "  " + args);
+                        lastReq = DateTime.Now;
+
                         MakeMove(args);
+
+                        data = Encoding.Unicode.GetBytes(" ");
+                        stream.Write(data, 0, data.Length);
                     }
                     else if (func == "getObj")
                     {
                         //TODO: REMOVE THIS!!!!!!! 
                         foreach (var gameClient in currGame.Clients)
-                        {
                             foreach (var player in gameClient.Players)
-                            {
                                 responseSb.Append(player.X + ":" + player.Y + "/");
-                            }
-                        }
 
-                        if (prevResponse == responseSb.ToString()) continue;
+                        var resp = responseSb.ToString();
 
-                        prevResponse = responseSb.ToString();
-                        Console.WriteLine(prevResponse);
-                        data = Encoding.Unicode.GetBytes(prevResponse);
+                        data = Encoding.Unicode.GetBytes(resp);
                         stream.Write(data, 0, data.Length);
-                    } 
+                    }                    
                 }
             }
             catch (Exception ex)

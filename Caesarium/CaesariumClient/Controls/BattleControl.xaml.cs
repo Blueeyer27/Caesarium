@@ -74,7 +74,7 @@ namespace CaesariumClient.Controls
             //Timer timer = new Timer(MakeAsyncMove, null, 0, 100);
             System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(MakeMove);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1);
             dispatcherTimer.Start();
         }
 
@@ -134,12 +134,10 @@ namespace CaesariumClient.Controls
 
         private void RefreshFieldObjects()
         {
-            //TODO: getFieldObjects:0 !!!
             byte[] data = Encoding.Unicode.GetBytes("getObj:0");
             ServerConnect.stream.Write(data, 0, data.Length);
 
-            //TODO:
-            string positions = ReadServerAnswer();
+            string positions = ReadServerAnswer().Trim();
             if (positions.Length > 0)
             {
                 var posData = positions.Split(new char[] { ':', '/' }, StringSplitOptions.RemoveEmptyEntries);

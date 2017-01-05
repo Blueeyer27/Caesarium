@@ -52,8 +52,8 @@ namespace CaesariumClient.Controls
             moveKeys.Add("L", false);
 
             players[0].Sprite = CreateObjectImage(@"\Images\Objects\admin.gif", 45, 45);
-            players[1].Sprite = CreateObjectImage(@"\Images\Objects\DD2_Warrior_Sprite.png", 45, 45);
-            players[2].Sprite = CreateObjectImage(@"\Images\Objects\admin.gif", 45, 45);
+            players[2].Sprite = CreateObjectImage(@"\Images\Objects\DD2_Warrior_Sprite.png", 45, 45);
+            players[1].Sprite = CreateObjectImage(@"\Images\Objects\admin.gif", 45, 45);
             players[3].Sprite = CreateObjectImage(@"\Images\Objects\DD2_Warrior_Sprite.png", 45, 45);
 
             //player.Stretch = Stretch.None;
@@ -65,7 +65,7 @@ namespace CaesariumClient.Controls
         }
 
         private void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
+        {
             //MakeMove();
         }
 
@@ -113,12 +113,11 @@ namespace CaesariumClient.Controls
                 moveKeys[e.Key.ToString()] = true;
         }
 
-        private StringBuilder makeMovesSb = new StringBuilder("");
         private void MakeMove(object sender, EventArgs e)
         {
             RefreshFieldObjects();
 
-            makeMovesSb.Clear();
+            StringBuilder makeMovesSb = new StringBuilder("");
             foreach (var key in moveKeys)
             {
                 if (key.Value) makeMovesSb.Append(key.Key);
@@ -127,14 +126,26 @@ namespace CaesariumClient.Controls
             if (makeMovesSb.Length < 1) return;
 
             makeMovesSb.Insert(0, "move:");
+            makeMovesSb.Append(";");
             //makeMovesQuery = "MakeMove:" + makeMovesQuery;
             byte[] data = Encoding.Unicode.GetBytes(makeMovesSb.ToString());
+            ServerConnect.stream.Write(data, 0, data.Length);
+            ServerConnect.stream.Write(data, 0, data.Length);
+            ServerConnect.stream.Write(data, 0, data.Length);
+            ServerConnect.stream.Write(data, 0, data.Length);
+            ServerConnect.stream.Write(data, 0, data.Length);
+            ServerConnect.stream.Write(data, 0, data.Length);
+
+            ServerConnect.stream.Write(data, 0, data.Length);
+            ServerConnect.stream.Write(data, 0, data.Length);
+            ServerConnect.stream.Write(data, 0, data.Length);
+            ServerConnect.stream.Write(data, 0, data.Length);
             ServerConnect.stream.Write(data, 0, data.Length);
         }
 
         private void RefreshFieldObjects()
         {
-            byte[] data = Encoding.Unicode.GetBytes("getObj:0");
+            byte[] data = Encoding.Unicode.GetBytes("getObj:0;");
             ServerConnect.stream.Write(data, 0, data.Length);
 
             string positions = ReadServerAnswer().Trim();
@@ -147,7 +158,7 @@ namespace CaesariumClient.Controls
                 {
                     if (posData.Length <= i) break;
                     MoveBattleObject(int.Parse(posData[i]), int.Parse(posData[i + 1]), player.Sprite);
-                    i+=2;
+                    i += 2;
                 }
             }
         }
@@ -162,7 +173,7 @@ namespace CaesariumClient.Controls
             {
                 bytes = ServerConnect.stream.Read(data, 0, data.Length);
                 builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
-            } 
+            }
 
             return builder.ToString();
         }

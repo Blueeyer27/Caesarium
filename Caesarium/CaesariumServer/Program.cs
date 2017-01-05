@@ -135,13 +135,13 @@ namespace CaesariumServer
             try
             {
                 stream = client.GetStream();
-                byte[] data = new byte[64]; // data buffer;
                 StringBuilder builder = new StringBuilder();
 
                 while (true)
                 {
                     // Getting message
                     builder.Clear();
+                    byte[] data = new byte[64]; // data buffer;
                     int bytes = 0;
                     do
                     {
@@ -150,9 +150,10 @@ namespace CaesariumServer
                     } while (stream.DataAvailable);
 
                     string message = builder.ToString();
-                    var funcWithArgs = message.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    var commands = message.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    var funcWithArgs = commands[0].Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                     var func = funcWithArgs[0];
-                    var args = message.Substring(func.Length + 1);
+                    var args = commands[0].Substring(func.Length + 1);
 
                     //string response = x + ":" + y;
 
@@ -165,7 +166,7 @@ namespace CaesariumServer
                     if (func == "move")
                     {
                         TimeSpan span = DateTime.Now - lastReq;
-                        if (span.TotalMilliseconds < 2000)
+                        if (span.TotalMilliseconds < 50)
                         {
                             data = Encoding.Unicode.GetBytes(" ");
                             stream.Write(data, 0, data.Length);

@@ -147,25 +147,23 @@ namespace CaesariumServer
                     //Console.WriteLine(response);
                     // sending response
 
-                    var response = "";
+                    var responseSb = new StringBuilder("");
 
-                    if (func == "MakeMove")
+                    if (func == "move")
                     {
                         MakeMove(args);
                     }
-                    else if (func == "getFieldObjects")
+                    else if (func == "getObj")
                     {
                         //TODO: REMOVE THIS!!!!!!! 
-                        int id = 0;
                         var firstClient = currGame.Clients[0].Players;
                         foreach (var player in firstClient)
                         {
-                            response += id + "{" + player.X + ":" + player.Y + "}";
-                            id++;
+                            responseSb.Append(player.X + ":" + player.Y + "/");
                         }
 
                         //Console.WriteLine(response);
-                        data = Encoding.Unicode.GetBytes(response);
+                        data = Encoding.Unicode.GetBytes(responseSb.ToString());
                         stream.Write(data, 0, data.Length);
                     } 
                 }

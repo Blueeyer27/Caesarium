@@ -68,7 +68,7 @@ namespace CaesariumClient.Controls
             //Timer timer = new Timer(MakeAsyncMove, null, 0, 100);
             System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(MakeMove);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 50);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             dispatcherTimer.Start();
         }
 
@@ -107,48 +107,48 @@ namespace CaesariumClient.Controls
                 moveKeys[e.Key.ToString()] = true;
         }
 
-        private string makeMovesQuery;
+        private StringBuilder makeMovesSb = new StringBuilder("");
         private void MakeMove(object sender, EventArgs e)
         {
             RefreshFieldObjects();
 
-            makeMovesQuery = "";
+            makeMovesSb.Clear();
             foreach (var key in moveKeys)
             {
-                if (key.Value) makeMovesQuery += key.Key;
+                if (key.Value) makeMovesSb.Append(key.Key);
             }
 
-            if (makeMovesQuery.Length < 1) return;
+            if (makeMovesSb.Length < 1) return;
 
-            makeMovesQuery = "MakeMove:" + makeMovesQuery;
-            byte[] data = Encoding.Unicode.GetBytes(makeMovesQuery);
+            makeMovesSb.Insert(0, "move:");
+            //makeMovesQuery = "MakeMove:" + makeMovesQuery;
+            byte[] data = Encoding.Unicode.GetBytes(makeMovesSb.ToString());
             ServerConnect.stream.Write(data, 0, data.Length);
-            makeMovesQuery = "";
         }
 
         private void RefreshFieldObjects()
         {
             //TODO: getFieldObjects:0 !!!
-            byte[] data = Encoding.Unicode.GetBytes("getFieldObjects:0");
+            byte[] data = Encoding.Unicode.GetBytes("getObj:0");
             ServerConnect.stream.Write(data, 0, data.Length);
 
             //TODO:
             string positions = ReadServerAnswer();
             if (positions.Length > 0)
             {
-                var posData = positions.Split(new char[] { ':', '{', '}' }, StringSplitOptions.RemoveEmptyEntries);
+                var posData = positions.Split(new char[] { ':', '/' }, StringSplitOptions.RemoveEmptyEntries);
 
-                var player = players[int.Parse(posData[0])];
-                MoveBattleObject(int.Parse(posData[1]), int.Parse(posData[2]), player.Sprite);
+                var player = players[0];
+                MoveBattleObject(int.Parse(posData[0]), int.Parse(posData[1]), player.Sprite);
 
-                player = players[int.Parse(posData[3])];
-                MoveBattleObject(int.Parse(posData[4]), int.Parse(posData[5]), player.Sprite);
+                player = players[1];
+                MoveBattleObject(int.Parse(posData[2]), int.Parse(posData[3]), player.Sprite);
             }
         }
 
         private string ReadServerAnswer()
         {
-            byte[] data = new byte[512];
+            byte[] data = new byte[64];
             StringBuilder builder = new StringBuilder("");
             int bytes = 0;
 

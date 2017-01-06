@@ -225,7 +225,7 @@ namespace CaesariumServer
 
                         var resp = responseSb.ToString();
 
-                        data = Encoding.Unicode.GetBytes("objs:" + resp + currGame.LightningObject);
+                        data = Encoding.Unicode.GetBytes(resp + currGame.LightningObject);
                         stream.Write(data, 0, data.Length);
                     }                    
                 }

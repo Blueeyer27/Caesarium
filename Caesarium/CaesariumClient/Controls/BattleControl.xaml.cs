@@ -173,8 +173,8 @@ namespace CaesariumClient.Controls
 
         private double CountAngle(string xParam, string yParam)
         {
-            int x = int.Parse(xParam);
-            int y = int.Parse(yParam);
+            int x = int.Parse(xParam) / step;
+            int y = int.Parse(yParam) / step;
 
             if (x == -1)
             {
@@ -217,7 +217,7 @@ namespace CaesariumClient.Controls
                     i += 2;
                 }
                }
-               if (objectData[1].Length > 0)
+               if (objectData.Length > 1 && objectData[1].Length > 0)
                {
                    var LightingData = objectData[1].Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                              RemoveBattleObject(players[0].Lightning);

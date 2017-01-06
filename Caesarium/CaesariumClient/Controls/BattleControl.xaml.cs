@@ -169,47 +169,6 @@ namespace CaesariumClient.Controls
             //makeMovesQuery = "MakeMove:" + makeMovesQuery;
             byte[] data = Encoding.Unicode.GetBytes(makeMovesSb.ToString());
             ServerConnect.stream.Write(data, 0, data.Length);
-
-            var action = ReadServerAnswer();
-            if (action.Length > 0)
-            {
-                var actData = action.Split(new char[] { ':', '/' }, StringSplitOptions.RemoveEmptyEntries);
-                for (var cmd = 0; cmd < actData.Length;)
-                    switch (actData[cmd])
-                    {
-                        case "skill":
-                            if (actData.Length % 5 != 0) return;
-
-                            RemoveBattleObject(players[int.Parse(actData[cmd + 1])].Lightning);
-                            RemoveBattleObject(players[int.Parse(actData[cmd + 1])].IceBarrier);
-                            players[0].Lightning.RenderTransform = new RotateTransform(CountAngle(actData[cmd + 2], actData[cmd + 3]));
-                            AddBattleObject(players[int.Parse(actData[cmd + 1])].x + 18, players[int.Parse(actData[cmd + 1])].y + 24,
-                            players[int.Parse(actData[cmd + 1])].Lightning);
-                            cmd += 5;
-                            break;
-                        case "objs":
-                            var i = cmd + 1;
-                            //actData = actData.Where(val => val != "objs").ToArray();
-                            foreach (var player in players)
-                            {
-                                try
-                                {
-                                    player.x = int.Parse(actData[i]);
-                                    player.y = int.Parse(actData[i + 1]);
-                                }
-                                catch (FormatException)
-                                {
-                                    cmd += i;
-                                    break;
-                                }
-
-                                MoveBattleObject(player.x, player.y, player.Sprite);
-                                i += 2;
-                            }
-                            break;
-                    }
-
-            }
         }
 
         private double CountAngle(string xParam, string yParam)
@@ -242,6 +201,33 @@ namespace CaesariumClient.Controls
         {
             byte[] data = Encoding.Unicode.GetBytes("getObj:0;");
             ServerConnect.stream.Write(data, 0, data.Length);
+             string positions = ReadServerAnswer().Trim();
+           if (positions.Length > 0)        
+           {
+               var objectData = positions.Split( new char[] {'#'}, StringSplitOptions.RemoveEmptyEntries);
+                var posData = objectData[0].Split(new char[] { ':', '/' }, StringSplitOptions.RemoveEmptyEntries);
+               if (posData.Length>0){
+               var i = 0;
+                foreach (var player in players)
+                {
+                    if (posData.Length <= i) break;
+                    player.x = int.Parse(posData[i]);
+                    player.y = int.Parse(posData[i + 1]);
+                    MoveBattleObject(player.x, player.y, player.Sprite);
+                    i += 2;
+                }
+               }
+               if (objectData[1].Length > 0)
+               {
+                   var LightingData = objectData[1].Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                             RemoveBattleObject(players[0].Lightning);
+                             RemoveBattleObject(players[0].IceBarrier);
+                             players[0].Lightning.RenderTransform = new RotateTransform(CountAngle(LightingData[3], LightingData[4]));
+                            AddBattleObject(int.Parse(LightingData[1]) + 18,int.Parse(LightingData[2]) + 24, players[0].Lightning);
+
+
+               }
+            }
 
 
         }

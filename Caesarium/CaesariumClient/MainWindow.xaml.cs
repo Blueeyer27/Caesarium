@@ -31,7 +31,7 @@ namespace CaesariumClient
     {
         Dictionary<String, Control> controls;
         const int port = 6112;
-        const string address = "192.168.1.106";
+        const string address = "127.0.0.1";
 
         public MainWindow()
         {

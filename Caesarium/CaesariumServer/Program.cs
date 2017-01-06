@@ -1,4 +1,4 @@
-using MySql.Data.MySqlClient;
+//using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +31,7 @@ namespace CaesariumServer
 
         static void Main(string[] args)
         {
-            CaesariumDatabase.Create();
+           // CaesariumDatabase.Create();
             //string connStr = "server=localhost;user=root;port=3306;password=qwerty11;";
             //using (var conn = new MySqlConnection(connStr))
             //using (var cmd = conn.CreateCommand())
@@ -96,10 +96,10 @@ namespace CaesariumServer
 
     public class Game
     {
+        public String LightningObject = ""; //TODO: Should be added to list in battlefield objects
         public int MaxPlayers { get; set; } //TODO:
         public BattleField gameField;
         public List<GameClient> Clients = new List<GameClient>();
-
         public Game(BattleField field, int maxPlayers = 2)
         {
             MaxPlayers = maxPlayers;
@@ -213,10 +213,8 @@ namespace CaesariumServer
                         //Console.WriteLine(id + "  " + counter);
                         lastReq = DateTime.Now;
 
-                        var answer = MakeMove(args);
+                        currGame.LightningObject = MakeMove(args);
 
-                        data = Encoding.Unicode.GetBytes(answer);
-                        stream.Write(data, 0, data.Length);
                     }
                     else if (func == "getObj")
                     {
@@ -227,7 +225,7 @@ namespace CaesariumServer
 
                         var resp = responseSb.ToString();
 
-                        data = Encoding.Unicode.GetBytes("objs:" + resp);
+                        data = Encoding.Unicode.GetBytes("objs:" + resp + currGame.LightningObject);
                         stream.Write(data, 0, data.Length);
                     }                    
                 }
@@ -313,7 +311,7 @@ namespace CaesariumServer
                     //Skills
                     case 'Q':
                         currGame.HitOpponents(this, Players[0].LightningHit());
-                        answer += "skill:0:" + Players[0].GetDirection().x + ":" + Players[0].GetDirection().y + ":" + Players[0].lightRange + ":";
+                        answer += "#LIGHTNING:"+ Players[0].X + ":" + Players[0].Y + ":" + Players[0].GetDirection().x + ":" + Players[0].GetDirection().y + ":" + Players[0].lightRange + "#";
                         break;
                     case 'E':
                         break;

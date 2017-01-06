@@ -8,6 +8,7 @@ namespace CaesariumServer
 {
     public class ObjectInstance
     {
+        public Coords prevMove = new Coords(0, 0);
         public string Name { get; set; }
         protected int height = 30, width = 30;
 
@@ -17,14 +18,14 @@ namespace CaesariumServer
         public int X 
         { 
             get { return _x; }
-            set { if (value >= 0) _x = value; } 
+            set { if (value >= 0) { _x = value; } } 
         }
 
         private int _y;
         public int Y
         {
             get { return _y; }
-            set { if (value >= 0) _y = value; }
+            set { if (value >= 0) { _y = value; } }
         }
 
         public ObjectInstance(string name)

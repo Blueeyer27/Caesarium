@@ -10,6 +10,18 @@ using System.Threading.Tasks;
 
 namespace CaesariumServer
 {
+    public class Coords
+    {
+        public int x;
+        public int y;
+
+        public Coords(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
     class Program
     {
         const int port = 6112;
@@ -93,12 +105,35 @@ namespace CaesariumServer
             MaxPlayers = maxPlayers;
             gameField = field;
         }
+
+        //TODO: Move this function to battlefield
+        public void HitOpponents(GameClient sender, List<Coords> hitCoords)
+        {
+            foreach (var client in Clients)
+            {
+                if (client != sender)
+                    foreach (var opponent in client.Players)
+                    {
+                        foreach (var coord in hitCoords)
+                        {
+                            if (coord.x <= opponent.X + 27 && coord.x >= opponent.X - 27
+                                && coord.y <= opponent.Y + 27 && coord.y >= opponent.Y - 27)
+                            {
+                                opponent.Hp -= 15;
+                                Console.WriteLine(opponent.Name + "  HP: " + opponent.Hp + "/60  coords: X = " + opponent.X + " Y = " + opponent.Y 
+                                    + "\nAttacker coords: X = " + sender.Players[0].X + " Y = " + sender.Players[0].Y);
+                                break;
+                            }
+                        }
+                    }
+            }
+        }
     }
 
     public class GameClient
     {
         public Thread ClientThread { get; set; }
-        List<PlayerInstance> Players;
+        public List<PlayerInstance> Players;
         Game currGame;
 
         public TcpClient client;
@@ -122,8 +157,8 @@ namespace CaesariumServer
         {
             if (Players.Count == 0)
             {
-                Players.Add(new PlayerInstance("Antowa"));
-                Players.Add(new PlayerInstance("Anton"));
+                Players.Add(new PlayerInstance("Antowa" + id));
+                Players.Add(new PlayerInstance("Anton" + id));
             }
         }
 
@@ -159,7 +194,7 @@ namespace CaesariumServer
 
                     //string response = x + ":" + y;
 
-                    Console.WriteLine("\n Function: " + func + " Arguments: " + args);
+                    //Console.WriteLine("\n Function: " + func + " Arguments: " + args);
                     //Console.WriteLine(response);
                     // sending response
 
@@ -168,14 +203,14 @@ namespace CaesariumServer
                     if (func == "action")
                     {
                         TimeSpan span = DateTime.Now - lastReq;
-                        if (span.TotalMilliseconds < 5)
+                        if (span.TotalMilliseconds < 10)
                         {
                             data = Encoding.Unicode.GetBytes(" ");
                             stream.Write(data, 0, data.Length);
                             continue;
                         }
 
-                        Console.WriteLine(id + "  " + counter);
+                        //Console.WriteLine(id + "  " + counter);
                         lastReq = DateTime.Now;
 
                         MakeMove(args);
@@ -212,39 +247,71 @@ namespace CaesariumServer
 
         private void MakeMove(string args)
         {
-            var step = 8;
+            var prevMove0 = new Coords(Players[0].X, Players[0].Y);
+            var prevMove1 = new Coords(Players[1].X, Players[1].Y);
+
+            Console.WriteLine(prevMove0.x + " " + prevMove0.y);
+            foreach (var ch in args)
+            {
+                //bool delete = true;
+                switch (ch)
+                {
+                    //Moves
+                    case 'W':
+                        Players[0].Y -= Players[0].step;
+                        Players[0].madeMove = true;
+                        break;
+                    case 'I':
+                        Players[1].Y -= Players[1].step;
+                        Players[1].madeMove = true;
+                        break;
+                    case 'A':
+                        Players[0].X -= Players[0].step;
+                        Players[0].madeMove = true;
+                        break;
+                    case 'J':
+                        Players[1].X -= Players[1].step;
+                        Players[1].madeMove = true;
+                        break;
+                    case 'S':
+                        Players[0].Y += Players[0].step;
+                        Players[0].madeMove = true;
+                        break;
+                    case 'K':
+                        Players[1].Y += Players[1].step;
+                        Players[1].madeMove = true;
+                        break;
+                    case 'D':
+                        Players[0].X += Players[0].step;
+                        Players[0].madeMove = true;
+                        break;
+                    case 'L':
+                        Players[1].X += Players[1].step;
+                        Players[1].madeMove = true;
+                        break;
+                    //default:
+                    //    delete = false;
+                    //    break;
+                }
+
+                //if (delete)
+                //{
+                //    String.Join("", args.Split(ch));
+                //}
+            }
+
+            if (Players[0].madeMove)
+                Players[0].SavePrevMove(prevMove0);
+            if (Players[1].madeMove)
+                Players[1].SavePrevMove(prevMove1);
 
             foreach (var ch in args)
             {
                 switch (ch)
                 {
-                    //Moves
-                    case 'W':
-                        Players[0].Y -= step;
-                        break;
-                    case 'I':
-                        Players[1].Y -= step;
-                        break;
-                    case 'A':
-                        Players[0].X -= step;
-                        break;
-                    case 'J':
-                        Players[1].X -= step;
-                        break;
-                    case 'S':
-                        Players[0].Y += step;
-                        break;
-                    case 'K':
-                        Players[1].Y += step;
-                        break;
-                    case 'D':
-                        Players[0].X += step;
-                        break;
-                    case 'L':
-                        Players[1].X += step;
-                        break;
                     //Skills
                     case 'Q':
+                        currGame.HitOpponents(this, Players[0].LightningHit());
                         break;
                     case 'E':
                         break;
@@ -254,7 +321,6 @@ namespace CaesariumServer
                         break;
                 }
             }
-
         }
     }
 }

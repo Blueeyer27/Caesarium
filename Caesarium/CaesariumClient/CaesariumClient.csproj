@@ -146,9 +146,11 @@
   <ItemGroup>
     <Resource Include="Images\Objects\DD2_Warrior_Sprite.png" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Resource Include="Images\Skills\lightning.gif" />
+    <Resource Include="Images\Skills\lightning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Skills\ice_barrier.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -59,7 +59,7 @@ namespace CaesariumServer
             return hitCoords;
         }
 
-        private Coords GetDirection()
+        public Coords GetDirection()
         {
             return new Coords(X - prevMove.x, Y - prevMove.y);
         }

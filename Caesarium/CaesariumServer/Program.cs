@@ -213,9 +213,9 @@ namespace CaesariumServer
                         //Console.WriteLine(id + "  " + counter);
                         lastReq = DateTime.Now;
 
-                        MakeMove(args);
+                        var answer = MakeMove(args);
 
-                        data = Encoding.Unicode.GetBytes(" ");
+                        data = Encoding.Unicode.GetBytes(answer);
                         stream.Write(data, 0, data.Length);
                     }
                     else if (func == "getObj")
@@ -227,7 +227,7 @@ namespace CaesariumServer
 
                         var resp = responseSb.ToString();
 
-                        data = Encoding.Unicode.GetBytes(resp);
+                        data = Encoding.Unicode.GetBytes("objs:" + resp);
                         stream.Write(data, 0, data.Length);
                     }                    
                 }
@@ -245,8 +245,9 @@ namespace CaesariumServer
             }
         }
 
-        private void MakeMove(string args)
+        private string MakeMove(string args)
         {
+            var answer = "";
             var prevMove0 = new Coords(Players[0].X, Players[0].Y);
             var prevMove1 = new Coords(Players[1].X, Players[1].Y);
 
@@ -312,6 +313,7 @@ namespace CaesariumServer
                     //Skills
                     case 'Q':
                         currGame.HitOpponents(this, Players[0].LightningHit());
+                        answer += "skill:0:" + Players[0].GetDirection().x + ":" + Players[0].GetDirection().y + ":" + Players[0].lightRange + ":";
                         break;
                     case 'E':
                         break;
@@ -321,6 +323,8 @@ namespace CaesariumServer
                         break;
                 }
             }
+
+            return answer;
         }
     }
 }

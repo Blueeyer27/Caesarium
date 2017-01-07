@@ -19,6 +19,7 @@ namespace CaesariumClient.Controls.Battle
         public Image Sprite { get; set; }
         public Image Lightning { get; set; }
         public Image IceBarrier { get; set; }
+        private DateTime lastReq;
         private static int DOWN = 0, RIGHT = 1, LEFT = 2, UP = 3;
 
         private bool _dead;
@@ -47,6 +48,8 @@ namespace CaesariumClient.Controls.Battle
             Sprite = sprite;
             Lightning = new Image();
             Lightning.Stretch = Stretch.Fill;
+
+            lastReq = DateTime.Now;
         }
 
         public void LightningHit()
@@ -60,8 +63,10 @@ namespace CaesariumClient.Controls.Battle
 
             var xDiff = x - this.x;
             var yDiff = y - this.y;
-            
-            
+
+            this.x = x;
+            this.y = y;
+
             if (yDiff < 0)
             {
                 yOffset = UP;
@@ -90,10 +95,6 @@ namespace CaesariumClient.Controls.Battle
 
             Sprite.Source = new CroppedBitmap(AllSpriteStates.Source as BitmapSource,
                 new Int32Rect(xOffset * 48, yOffset * 48, 48, 48));
-
-
-            this.x = x;
-            this.y = y;
         }
     }
 }

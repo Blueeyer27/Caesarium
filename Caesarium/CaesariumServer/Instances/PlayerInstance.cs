@@ -33,6 +33,7 @@ namespace CaesariumServer
         public List<Coords> LightningHit()
         {
             var direction = GetDirection();
+                        
             List<Coords> hitCoords = new List<Coords>();
 
             TimeSpan diff = DateTime.Now - lastLightCast;
@@ -40,7 +41,13 @@ namespace CaesariumServer
             {
                 for (var i = 0; i < lightRange / step; i++)
                 {
-                    hitCoords.Add(new Coords(X + direction.x * i, Y + direction.y * i));
+                    int xRange = direction.x * i;
+                    int yRange = direction.y * i;
+                    if (direction.x != 0 && direction.y != 0)
+                    {
+                        hitCoords.Add(new Coords(X + (int)(xRange * 0.707), Y + (int)(yRange * 0.707)));
+                    }
+                    else hitCoords.Add(new Coords(X + xRange, Y + yRange));
                 }
 
                 lastLightCast = DateTime.Now;

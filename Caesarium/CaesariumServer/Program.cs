@@ -200,12 +200,12 @@ namespace CaesariumServer
                     //Console.WriteLine(response);
                     // sending response
 
-                    var responseSb = new StringBuilder("");
+                    var responseSb = new StringBuilder(" ");
 
                     if (func == "action")
                     {
                         TimeSpan span = DateTime.Now - lastReq;
-                        if (span.TotalMilliseconds < 10)
+                        if (span.TotalMilliseconds < 35)
                         {
                             data = Encoding.Unicode.GetBytes(" ");
                             stream.Write(data, 0, data.Length);
@@ -217,6 +217,8 @@ namespace CaesariumServer
 
                         currGame.LightningObject = MakeMove(args);
 
+                        data = Encoding.Unicode.GetBytes(responseSb.ToString());
+                        stream.Write(data, 0, data.Length);
                     }
                     else if (func == "getObj")
                     {
@@ -229,6 +231,11 @@ namespace CaesariumServer
                         var resp = responseSb.ToString();
 
                         data = Encoding.Unicode.GetBytes(resp + currGame.LightningObject);
+                        stream.Write(data, 0, data.Length);
+                    }
+                    else
+                    {
+                        data = Encoding.Unicode.GetBytes(responseSb.ToString());
                         stream.Write(data, 0, data.Length);
                     }
                 }

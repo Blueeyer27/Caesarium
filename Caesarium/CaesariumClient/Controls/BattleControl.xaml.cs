@@ -247,6 +247,7 @@ namespace CaesariumClient.Controls
                     RemoveBattleObject(players[0].Lightning);
                     RemoveBattleObject(players[0].IceBarrier);
                     players[0].Lightning.RenderTransform = new RotateTransform(CountAngle(LightingData[3], LightingData[4]));
+                    players[0].Lightning.Height = int.Parse(LightingData[5]);
                     AddBattleObject(int.Parse(LightingData[1]) + 25, int.Parse(LightingData[2]) + 25, players[0].Lightning);
 
 

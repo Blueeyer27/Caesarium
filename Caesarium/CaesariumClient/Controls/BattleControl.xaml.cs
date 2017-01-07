@@ -46,28 +46,34 @@ namespace CaesariumClient.Controls
             players.Add(new PlayerInstance(new Image()));
             players.Add(new PlayerInstance(new Image()));
 
+            string path = Directory.GetCurrentDirectory();
+            path = path.Substring(0, path.Length - 10);
 
+            foreach (var player in players)
+            {
+                player.Sprite = CreateObjectImage(path + @"\Images\Objects\skin" + player.skinNumber + ".png", 45, 45);
+                player.Sprite.Source = new CroppedBitmap(player.Sprite.Source as BitmapSource, new Int32Rect(0, 0, 48, 48));
+                AddBattleObject(0, 0, player.Sprite);
+            }
 
-            players[0].Sprite = CreateObjectImage(@"\Images\Objects\admin.gif", 45, 45);
-            players[2].Sprite = CreateObjectImage(@"\Images\Objects\DD2_Warrior_Sprite.png", 45, 45);
-            players[1].Sprite = CreateObjectImage(@"\Images\Objects\admin.gif", 45, 45);
-            players[3].Sprite = CreateObjectImage(@"\Images\Objects\DD2_Warrior_Sprite.png", 45, 45);
+            //players[0].Sprite = CreateObjectImage(@"\Images\Objects\admin.gif", 45, 45);
+            //players[2].Sprite = CreateObjectImage(@"\Images\Objects\DD2_Warrior_Sprite.png", 45, 45);
+            //players[1].Sprite = CreateObjectImage(@"\Images\Objects\admin.gif", 45, 45);
+            //players[3].Sprite = CreateObjectImage(@"\Images\Objects\DD2_Warrior_Sprite.png", 45, 45);
 
             players[0].Lightning = CreateObjectImage(@"\Images\Skills\lightning.png", 500, 1200);
             players[0].Lightning.Clip = new RectangleGeometry { Rect = new Rect(0, 5, 80, 1200) };
             //BitmapSource bs = BitmapSource.Create()
-            players[0].IceBarrier = CreateObjectImage(@"C:\Users\Anton\Source\GitRepos\Caesarium_Main\Caesarium\CaesariumClient\Images\Skills\ice_barrier.png", 200, 350);
+            players[0].IceBarrier = CreateObjectImage(path + @"\Images\Skills\ice_barrier.png", 200, 350);
             players[0].IceBarrier.Source = new CroppedBitmap(players[0].IceBarrier.Source as BitmapSource, new Int32Rect(275, 0, 130, 90));
             //players[0].IceBarrier.Clip = new RectangleGeometry { Rect = new Rect(370, 0, 350, 230) };
 
             //player.Stretch = Stretch.None;
 
-            AddBattleObject(0, 0, players[0].Sprite);
-            AddBattleObject(0, 0, players[1].Sprite);
-            AddBattleObject(0, 0, players[2].Sprite);
-            AddBattleObject(0, 0, players[3].Sprite);
-
-
+            //AddBattleObject(0, 0, players[0].Sprite);
+            //AddBattleObject(0, 0, players[1].Sprite);
+            //AddBattleObject(0, 0, players[2].Sprite);
+            //AddBattleObject(0, 0, players[3].Sprite);
         }
 
         private void InitializeKeys()
@@ -81,10 +87,10 @@ namespace CaesariumClient.Controls
             actionKeys.Add("K", false);
             actionKeys.Add("L", false);
 
-            actionKeys.Add("Q", false);
-            actionKeys.Add("E", false);
-            actionKeys.Add("U", false);
-            actionKeys.Add("O", false);
+            actionKeys.Add("C", false);
+            actionKeys.Add("V", false);
+            actionKeys.Add("N", false);
+            actionKeys.Add("B", false);
         }
 
         private void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -127,15 +133,18 @@ namespace CaesariumClient.Controls
 
         private void contentControl_KeyUp(object sender, KeyEventArgs e)
         {
-            if (actionKeys.ContainsKey(e.Key.ToString()))
-                actionKeys[e.Key.ToString()] = false;
+            var key = e.Key.ToString();
+
+            if (actionKeys.ContainsKey(key))
+                actionKeys[key] = false;
         }
 
-        int angle = 0;
         public void contentControl_KeyDown(object sender, KeyEventArgs e)
         {
-            if (actionKeys.ContainsKey(e.Key.ToString()))
-                actionKeys[e.Key.ToString()] = true;
+            var key = e.Key.ToString();
+
+            if (actionKeys.ContainsKey(key))
+                actionKeys[key] = true;
 
             switch (e.Key)
             {
@@ -174,7 +183,7 @@ namespace CaesariumClient.Controls
         private double CountAngle(string xParam, string yParam)
         {
             int x = int.Parse(xParam) / step;
-            int y = int.Parse(yParam) / step;
+            int y = int.Parse(yParam) / step * -1;
 
             if (x == -1)
             {
@@ -201,32 +210,35 @@ namespace CaesariumClient.Controls
         {
             byte[] data = Encoding.Unicode.GetBytes("getObj:0;");
             ServerConnect.stream.Write(data, 0, data.Length);
-             string positions = ReadServerAnswer().Trim();
-           if (positions.Length > 0)        
-           {
-               var objectData = positions.Split( new char[] {'#'}, StringSplitOptions.RemoveEmptyEntries);
+            string positions = ReadServerAnswer().Trim();
+            if (positions.Length > 0)
+            {
+                var objectData = positions.Split(new char[] { '#' }, StringSplitOptions.RemoveEmptyEntries);
                 var posData = objectData[0].Split(new char[] { ':', '/' }, StringSplitOptions.RemoveEmptyEntries);
-               if (posData.Length>0){
-               var i = 0;
-                foreach (var player in players)
+                if (posData.Length > 0)
                 {
-                    if (posData.Length <= i) break;
-                    player.x = int.Parse(posData[i]);
-                    player.y = int.Parse(posData[i + 1]);
-                    MoveBattleObject(player.x, player.y, player.Sprite);
-                    i += 2;
+                    var i = 0;
+                    foreach (var player in players)
+                    {
+                        if (posData.Length <= i) break;
+                        var x = int.Parse(posData[i]);
+                        var y = int.Parse(posData[i + 1]);
+
+                        player.AnimateMove(x, y);
+                        MoveBattleObject(player.x, player.y, player.Sprite);
+                        i += 2;
+                    }
                 }
-               }
-               if (objectData.Length > 1 && objectData[1].Length > 0)
-               {
-                   var LightingData = objectData[1].Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-                             RemoveBattleObject(players[0].Lightning);
-                             RemoveBattleObject(players[0].IceBarrier);
-                             players[0].Lightning.RenderTransform = new RotateTransform(CountAngle(LightingData[3], LightingData[4]));
-                            AddBattleObject(int.Parse(LightingData[1]) + 18,int.Parse(LightingData[2]) + 24, players[0].Lightning);
+                if (objectData.Length > 1 && objectData[1].Length > 0)
+                {
+                    var LightingData = objectData[1].Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    RemoveBattleObject(players[0].Lightning);
+                    RemoveBattleObject(players[0].IceBarrier);
+                    players[0].Lightning.RenderTransform = new RotateTransform(CountAngle(LightingData[3], LightingData[4]));
+                    AddBattleObject(int.Parse(LightingData[1]) + 25, int.Parse(LightingData[2]) + 25, players[0].Lightning);
 
 
-               }
+                }
             }
 
 

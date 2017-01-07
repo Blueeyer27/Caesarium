@@ -31,7 +31,7 @@ namespace CaesariumServer
 
         static void Main(string[] args)
         {
-           // CaesariumDatabase.Create();
+            // CaesariumDatabase.Create();
             //string connStr = "server=localhost;user=root;port=3306;password=qwerty11;";
             //using (var conn = new MySqlConnection(connStr))
             //using (var cmd = conn.CreateCommand())
@@ -120,7 +120,7 @@ namespace CaesariumServer
                                 && coord.y <= opponent.Y + 27 && coord.y >= opponent.Y - 27)
                             {
                                 opponent.Hp -= 15;
-                                Console.WriteLine(opponent.Name + "  HP: " + opponent.Hp + "/60  coords: X = " + opponent.X + " Y = " + opponent.Y 
+                                Console.WriteLine(opponent.Name + "  HP: " + opponent.Hp + "/60  coords: X = " + opponent.X + " Y = " + opponent.Y
                                     + "\nAttacker coords: X = " + sender.Players[0].X + " Y = " + sender.Players[0].Y);
                                 break;
                             }
@@ -143,7 +143,7 @@ namespace CaesariumServer
         {
             this.id = id;
             this.client = client;
-            
+
 
             Players = new List<PlayerInstance>();
         }
@@ -227,7 +227,7 @@ namespace CaesariumServer
 
                         data = Encoding.Unicode.GetBytes(resp + currGame.LightningObject);
                         stream.Write(data, 0, data.Length);
-                    }                    
+                    }
                 }
             }
             catch (Exception ex)
@@ -309,17 +309,18 @@ namespace CaesariumServer
                 switch (ch)
                 {
                     //Skills
-                    case 'Q':
+                    case 'C':
                         currGame.HitOpponents(this, Players[0].LightningHit());
-                        answer += "#LIGHTNING:"+ Players[0].X + ":" + Players[0].Y + ":" + Players[0].GetDirection().x + ":" + Players[0].GetDirection().y + ":" + Players[0].lightRange + "#";
+                        answer += "#LIGHTNING:" + Players[0].X + ":" + Players[0].Y + ":" + Players[0].GetDirection().x + ":" + Players[0].GetDirection().y + ":" + Players[0].lightRange + "#";
                         break;
-                    case 'E':
+                    case 'V':
                         break;
-                    case 'U':
+                    case 'N':
                         break;
-                    case 'O':
+                    case 'B':
                         break;
                 }
+
             }
 
             return answer;

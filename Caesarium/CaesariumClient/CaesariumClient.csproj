@@ -152,6 +152,16 @@
   <ItemGroup>
     <Resource Include="Images\Skills\ice_barrier.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Objects\skin0.png" />
+    <Resource Include="Images\Objects\skin1.png" />
+    <Resource Include="Images\Objects\skin2.png" />
+    <Resource Include="Images\Objects\skin3.png" />
+    <Resource Include="Images\Objects\skin4.png" />
+    <Resource Include="Images\Objects\skin5.png" />
+    <Resource Include="Images\Objects\skin6.png" />
+    <Resource Include="Images\Objects\skin7.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

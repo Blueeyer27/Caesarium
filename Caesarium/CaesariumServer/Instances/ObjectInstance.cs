@@ -12,20 +12,22 @@ namespace CaesariumServer
         public string Name { get; set; }
         protected int height = 30, width = 30;
 
+        public bool Dead { get; set; }
+
         public int Hp { get; set; }
 
         private int _x;
         public int X 
         { 
             get { return _x; }
-            set { if (value >= 0) { _x = value; } } 
+            set { if (value >= 0 && !Dead) { _x = value; } } 
         }
 
         private int _y;
         public int Y
         {
             get { return _y; }
-            set { if (value >= 0) { _y = value; } }
+            set { if (value >= 0 && !Dead) { _y = value; } }
         }
 
         public ObjectInstance(string name)

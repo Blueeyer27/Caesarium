@@ -51,9 +51,13 @@ namespace CaesariumClient.Controls
 
             foreach (var player in players)
             {
-                player.Sprite = CreateObjectImage(path + @"\Images\Objects\skin" + player.skinNumber + ".png", 45, 45);
-                player.Sprite.Source = new CroppedBitmap(player.Sprite.Source as BitmapSource, new Int32Rect(0, 0, 48, 48));
-                AddBattleObject(0, 0, player.Sprite);
+                player.AllSpriteStates = CreateObjectImage(path + @"\Images\Objects\skin" + player.skinNumber + ".png", 144, 192);
+                player.DeadSprite = CreateObjectImage(path + @"\Images\Objects\mage.png", 48, 48);
+                
+                player.Sprite = CreateObjectImage(path + @"\Images\Objects\skin" + player.skinNumber + ".png", 48, 48);
+                player.Sprite.Source = new CroppedBitmap(player.AllSpriteStates.Source as BitmapSource, new Int32Rect(0, 0, 48, 48));
+
+                AddBattleObject(0, 0, player.Sprite);            
             }
 
             //players[0].Sprite = CreateObjectImage(@"\Images\Objects\admin.gif", 45, 45);
@@ -224,8 +228,18 @@ namespace CaesariumClient.Controls
                         var x = int.Parse(posData[i]);
                         var y = int.Parse(posData[i + 1]);
 
-                        player.AnimateMove(x, y);
-                        MoveBattleObject(player.x, player.y, player.Sprite);
+                        if (true || x < 0 || y < 0)
+                        {
+                            player.Dead = true;
+                            player.AnimateMove(x, y);
+                            MoveBattleObject(player.x, player.y, player.Sprite);
+                        }
+                        else if (!player.Dead)
+                        {
+                            player.AnimateMove(x, y);
+                            MoveBattleObject(player.x, player.y, player.Sprite);
+                        }
+
                         i += 2;
                     }
                 }

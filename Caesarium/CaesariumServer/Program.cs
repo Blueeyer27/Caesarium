@@ -120,6 +120,8 @@ namespace CaesariumServer
                                 && coord.y <= opponent.Y + 27 && coord.y >= opponent.Y - 27)
                             {
                                 opponent.Hp -= 15;
+                                if (opponent.Hp <= 0)
+                                    opponent.Dead = true;
                                 Console.WriteLine(opponent.Name + "  HP: " + opponent.Hp + "/60  coords: X = " + opponent.X + " Y = " + opponent.Y
                                     + "\nAttacker coords: X = " + sender.Players[0].X + " Y = " + sender.Players[0].Y);
                                 break;
@@ -221,7 +223,8 @@ namespace CaesariumServer
                         //TODO: REMOVE THIS!!!!!!! 
                         foreach (var gameClient in currGame.Clients)
                             foreach (var player in gameClient.Players)
-                                responseSb.Append(player.X + ":" + player.Y + "/");
+                                if (player.Dead) responseSb.Append("-1:-1/");
+                                else responseSb.Append(player.X + ":" + player.Y + "/");
 
                         var resp = responseSb.ToString();
 
@@ -310,8 +313,11 @@ namespace CaesariumServer
                 {
                     //Skills
                     case 'C':
-                        currGame.HitOpponents(this, Players[0].LightningHit());
-                        answer += "#LIGHTNING:" + Players[0].X + ":" + Players[0].Y + ":" + Players[0].GetDirection().x + ":" + Players[0].GetDirection().y + ":" + Players[0].lightRange + "#";
+                        if (!Players[0].Dead)
+                        {
+                            currGame.HitOpponents(this, Players[0].LightningHit());
+                            answer += "#LIGHTNING:" + Players[0].X + ":" + Players[0].Y + ":" + Players[0].GetDirection().x + ":" + Players[0].GetDirection().y + ":" + Players[0].lightRange + "#";
+                        }
                         break;
                     case 'V':
                         break;

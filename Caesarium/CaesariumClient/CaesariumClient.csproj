@@ -141,10 +141,10 @@
     <Resource Include="Images\Objects\admin.gif" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Objects\BlackMage.png" />
+    <Resource Include="Images\Objects\mage.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Objects\DD2_Warrior_Sprite.png" />
+    <Resource Include="Images\Objects\warrior.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Skills\lightning.png" />
@@ -161,6 +161,9 @@
     <Resource Include="Images\Objects\skin5.png" />
     <Resource Include="Images\Objects\skin6.png" />
     <Resource Include="Images\Objects\skin7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Objects\dead.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

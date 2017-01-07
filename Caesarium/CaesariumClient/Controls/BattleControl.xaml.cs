@@ -52,8 +52,8 @@ namespace CaesariumClient.Controls
             foreach (var player in players)
             {
                 player.AllSpriteStates = CreateObjectImage(path + @"\Images\Objects\skin" + player.skinNumber + ".png", 144, 192);
-                player.DeadSprite = CreateObjectImage(path + @"\Images\Objects\mage.png", 48, 48);
-                
+                player.DeadSprite = CreateObjectImage(path + @"\Images\Objects\dead.png", 48, 48);
+
                 player.Sprite = CreateObjectImage(path + @"\Images\Objects\skin" + player.skinNumber + ".png", 48, 48);
                 player.Sprite.Source = new CroppedBitmap(player.AllSpriteStates.Source as BitmapSource, new Int32Rect(0, 0, 48, 48));
 
@@ -228,11 +228,9 @@ namespace CaesariumClient.Controls
                         var x = int.Parse(posData[i]);
                         var y = int.Parse(posData[i + 1]);
 
-                        if (true || x < 0 || y < 0)
+                        if (x < 0 || y < 0)
                         {
                             player.Dead = true;
-                            player.AnimateMove(x, y);
-                            MoveBattleObject(player.x, player.y, player.Sprite);
                         }
                         else if (!player.Dead)
                         {

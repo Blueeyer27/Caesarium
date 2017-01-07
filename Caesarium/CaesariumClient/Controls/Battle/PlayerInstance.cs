@@ -31,7 +31,7 @@ namespace CaesariumClient.Controls.Battle
                     _dead = true;
                     if (true)
                     {
-                        Sprite.Source = DeadSprite.Source;
+                        Sprite.Source = new CroppedBitmap(DeadSprite.Source as BitmapSource, new Int32Rect(0, 0, 100, 100));
                     }
                 }
             }

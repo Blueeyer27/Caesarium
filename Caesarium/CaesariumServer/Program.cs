@@ -242,7 +242,6 @@ namespace CaesariumServer
 
                         //Console.WriteLine(id + "  " + counter);
                         lastReq = DateTime.Now;
-
                         MakeMove(args);
 
                         data = Encoding.Unicode.GetBytes(responseSb.ToString());
@@ -291,10 +290,8 @@ namespace CaesariumServer
             }
         }
 
-        private string MakeMove(string args)
+        private void MakeMove(string args)
         {
-            var answer = "";
-
             foreach (var player in Players)
             {
                 var prevMove = new Coords(player.X, player.Y);
@@ -335,8 +332,6 @@ namespace CaesariumServer
                             currGame.SkillUse("barr", this, player);
                 }
             }
-
-            return answer;
         }
     }
 }

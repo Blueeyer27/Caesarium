@@ -10,25 +10,26 @@ namespace CaesariumServer
     {
         public int step = 8;
 
-        public int lightRange = 300, lightCountdown = 1000;
-        public double lightDmg = 3;
+        public int lightRange = 300, lightCountdown = 500;
+        public int lightDmg = 15;
         private DateTime lastLightCast = DateTime.Now.AddHours(-1);
 
+        public char[] moveButtons;
+        public char[] skillButtons;
+
         public int barrRange = 100, barrCountdown = 3000;
-        public double barrDmg = 1.5;
+        public int barrDmg = 10;
         private DateTime lastBarrierCast = DateTime.Now.AddHours(-1);
 
         public bool madeMove = false;
 
         public int Power { get; set; }
 
-        public PlayerInstance(string name) : base(name)
+        public PlayerInstance(string name, char[] moveButtons, char[] skillButtons, int x = 0, int y = 0, int hp = 60, int power = 10)
+            : base(name, x, y, hp)
         {
-            Power = 10;
-        }
-
-        public PlayerInstance(string name, int x, int y, int hp = 60, int power = 10) : base(name, x, y, hp)
-        {
+            this.moveButtons = moveButtons;
+            this.skillButtons = skillButtons;
             Power = power;
         }
 

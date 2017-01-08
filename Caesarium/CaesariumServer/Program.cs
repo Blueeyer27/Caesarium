@@ -107,7 +107,7 @@ namespace CaesariumServer
         }
 
         //TODO: Move this function to battlefield
-        public void HitOpponents(GameClient sender, List<Coords> hitCoords)
+        public void HitOpponents(GameClient sender, List<Coords> hitCoords, int damage)
         {
             foreach (var client in Clients)
             {
@@ -119,7 +119,7 @@ namespace CaesariumServer
                             if (coord.x <= opponent.X + 27 && coord.x >= opponent.X - 27
                                 && coord.y <= opponent.Y + 27 && coord.y >= opponent.Y - 27)
                             {
-                                opponent.Hp -= 15;
+                                opponent.Hp -= damage;
                                 if (opponent.Hp <= 0)
                                     opponent.Dead = true;
                                 Console.WriteLine(opponent.Name + "  HP: " + opponent.Hp + "/60  coords: X = " + opponent.X + " Y = " + opponent.Y
@@ -141,7 +141,7 @@ namespace CaesariumServer
                     foreach (var client in Clients)
                     {
                         client.unhandledSkills.Add(new Skill(skill, attacker.X, attacker.Y, attacker.lightRange, attacker.GetDirection()));
-                        HitOpponents(sender, attacker.LightningHit());
+                        HitOpponents(sender, attacker.LightningHit(), attacker.lightDmg);
                     }
                     break;
                 case "barr":
@@ -150,7 +150,7 @@ namespace CaesariumServer
                     foreach (var client in Clients)
                     {
                         client.unhandledSkills.Add(new Skill(skill, attacker.X, attacker.Y, attacker.barrRange));
-                        HitOpponents(sender, attacker.BarrierHit());
+                        HitOpponents(sender, attacker.BarrierHit(), attacker.barrDmg);
                     }
                     break;
             }
@@ -187,8 +187,8 @@ namespace CaesariumServer
         {
             if (Players.Count == 0)
             {
-                Players.Add(new PlayerInstance("Antowa" + id));
-                Players.Add(new PlayerInstance("Anton" + id));
+                Players.Add(new PlayerInstance("Antowa" + id, new char[] { 'W', 'A', 'S', 'D' }, new char[] { 'C', 'V' }));
+                Players.Add(new PlayerInstance("Anton" + id, new char[] { 'I', 'J', 'K', 'L' }, new char[] { 'N', 'B' }));
             }
         }
 
@@ -294,82 +294,46 @@ namespace CaesariumServer
         private string MakeMove(string args)
         {
             var answer = "";
-            var prevMove0 = new Coords(Players[0].X, Players[0].Y);
-            var prevMove1 = new Coords(Players[1].X, Players[1].Y);
 
-            Console.WriteLine(prevMove0.x + " " + prevMove0.y);
-            foreach (var ch in args)
+            foreach (var player in Players)
             {
-                //bool delete = true;
-                switch (ch)
+                var prevMove = new Coords(player.X, player.Y);
+
+                foreach (var ch in args)
                 {
-                    //Moves
-                    case 'W':
-                        Players[0].Y -= Players[0].step;
-                        Players[0].madeMove = true;
-                        break;
-                    case 'I':
-                        Players[1].Y -= Players[1].step;
-                        Players[1].madeMove = true;
-                        break;
-                    case 'A':
-                        Players[0].X -= Players[0].step;
-                        Players[0].madeMove = true;
-                        break;
-                    case 'J':
-                        Players[1].X -= Players[1].step;
-                        Players[1].madeMove = true;
-                        break;
-                    case 'S':
-                        Players[0].Y += Players[0].step;
-                        Players[0].madeMove = true;
-                        break;
-                    case 'K':
-                        Players[1].Y += Players[1].step;
-                        Players[1].madeMove = true;
-                        break;
-                    case 'D':
-                        Players[0].X += Players[0].step;
-                        Players[0].madeMove = true;
-                        break;
-                    case 'L':
-                        Players[1].X += Players[1].step;
-                        Players[1].madeMove = true;
-                        break;
-                    //default:
-                    //    delete = false;
-                    //    break;
+                    if (ch == player.moveButtons[0])
+                    {
+                        player.Y -= player.step;
+                        player.madeMove = true;
+                    }
+                    else if (ch == player.moveButtons[1])
+                    {
+                        player.X -= player.step;
+                        player.madeMove = true;
+                    }
+                    else if (ch == player.moveButtons[2])
+                    {
+                        player.Y += player.step;
+                        player.madeMove = true;
+                    }
+                    else if (ch == player.moveButtons[3])
+                    {
+                        player.X += player.step;
+                        player.madeMove = true;
+                    }
                 }
 
-                //if (delete)
-                //{
-                //    String.Join("", args.Split(ch));
-                //}
-            }
+                if (player.madeMove)
+                    player.SavePrevMove(prevMove);
 
-            if (Players[0].madeMove)
-                Players[0].SavePrevMove(prevMove0);
-            if (Players[1].madeMove)
-                Players[1].SavePrevMove(prevMove1);
-
-            foreach (var ch in args)
-            {
-                switch (ch)
+                foreach (var ch in args)
                 {
-                    case 'C':
-                        if (!Players[0].Dead)
-                            currGame.SkillUse("light", this, Players[0]);
-                        break;
-                    case 'V':
-                        if (!Players[0].Dead)
-                            currGame.SkillUse("barr", this, Players[0]);
-                        break;
-                    case 'N':
-                        break;
-                    case 'B':
-                        break;
+                    if (!player.Dead)
+                        if (ch == player.skillButtons[0])
+                            currGame.SkillUse("light", this, player);
+                        else if (ch == player.skillButtons[1])
+                            currGame.SkillUse("barr", this, player);
                 }
-
             }
 
             return answer;

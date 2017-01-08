@@ -26,6 +26,7 @@ namespace CaesariumClient.Controls.Battle
             Sprite = new Image();
             Sprite.Source = new CroppedBitmap(AllSpriteStates.Source as BitmapSource,
                 new Int32Rect(0, 0, cropStep, spriteHeight));
+            Sprite.Stretch = Stretch.Fill;
 
             this.spriteHeight = spriteHeight;
             this.cropStep = cropStep;

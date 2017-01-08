@@ -81,16 +81,10 @@ namespace CaesariumClient.Controls
             actionKeys.Add("B", false);
         }
 
-        private void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            //MakeMove();
-        }
-
         private void battleFieldGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            //Timer timer = new Timer(MakeAsyncMove, null, 0, 100);
-            CreateTimer(MakeAction, 10);
-            CreateTimer(CheckDisplayedSkills, 50);
+            CreateTimer(MakeAction, 20);
+            CreateTimer(CheckDisplayedSkills, 30);
         }
 
         private void CheckDisplayedSkills(object sender, EventArgs e)
@@ -187,19 +181,19 @@ namespace CaesariumClient.Controls
             if (x == -1)
             {
                 if (y == -1) return 45;
-                if (y == 0) return 90;
-                if (y == 1) return 135;
+                else if (y == 0) return 90;
+                else if (y == 1) return 135;
             }
-            if (x == 0)
+            else if (x == 0)
             {
                 if (y == -1) return 0;
-                if (y == 1) return 180;
+                else if (y == 1) return 180;
             }
-            if (x == 1)
+            else if (x == 1)
             {
                 if (y == -1) return 325;
-                if (y == 0) return 270;
-                if (y == 1) return 225;
+                else if (y == 0) return 270;
+                else if (y == 1) return 225;
             }
 
             return 0;
@@ -223,14 +217,14 @@ namespace CaesariumClient.Controls
                         var x = int.Parse(posData[i]);
                         var y = int.Parse(posData[i + 1]);
 
-                        if (x < 0 || y < 0)
+                        if (!player.Dead)
                         {
-                            player.Dead = true;
-                        }
-                        else if (!player.Dead)
-                        {
-                            player.AnimateMove(x, y);
-                            MoveBattleObject(player.x, player.y, player.Sprite);
+                            if (x < 0 || y < 0) player.Dead = true;
+                            else
+                            {
+                                player.AnimateMove(x, y);
+                                MoveBattleObject(player.x, player.y, player.Sprite);
+                            }
                         }
 
                         i += 2;
@@ -266,8 +260,6 @@ namespace CaesariumClient.Controls
                     }
                 }
             }
-
-
         }
 
         private string ReadServerAnswer()

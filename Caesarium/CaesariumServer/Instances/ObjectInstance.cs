@@ -20,14 +20,14 @@ namespace CaesariumServer
         public int X 
         { 
             get { return _x; }
-            set { if (value >= 0 && !Dead) { _x = value; } } 
+            set { if (value >= 0 && value <= 840 && !Dead) { _x = value; } } 
         }
 
         private int _y;
         public int Y
         {
             get { return _y; }
-            set { if (value >= 0 && !Dead) { _y = value; } }
+            set { if (value >= 0 && value <= 480 && !Dead) { _y = value; } }
         }
 
         public ObjectInstance(string name)

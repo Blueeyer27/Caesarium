@@ -17,8 +17,7 @@ namespace CaesariumClient.Controls.Battle
         public Image AllSpriteStates { get; set; }
         public Image DeadSprite { get; set; }
         public Image Sprite { get; set; }
-        public Image Lightning { get; set; }
-        public Image IceBarrier { get; set; }
+
         private DateTime lastReq;
         private static int DOWN = 0, RIGHT = 1, LEFT = 2, UP = 3;
 
@@ -46,8 +45,6 @@ namespace CaesariumClient.Controls.Battle
             this.x = x;
             this.y = y;
             Sprite = sprite;
-            Lightning = new Image();
-            Lightning.Stretch = Stretch.Fill;
 
             lastReq = DateTime.Now;
         }

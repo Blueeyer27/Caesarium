@@ -32,14 +32,31 @@ namespace CaesariumServer
             Power = power;
         }
 
+        public Coords GetDirection()
+        {
+            return new Coords(X - prevMove.x, Y - prevMove.y);
+        }
+
+        public void SavePrevMove(Coords move)
+        {
+            prevMove.x = move.x;
+            prevMove.y = move.y;
+            madeMove = false;
+        }
+
+        public bool CanLightningHit()
+        {
+            TimeSpan diff = DateTime.Now - lastLightCast;
+            return diff.TotalMilliseconds >= lightCountdown;
+        }
+
         public List<Coords> LightningHit()
         {
             var direction = GetDirection();
-                        
+
             List<Coords> hitCoords = new List<Coords>();
 
-            TimeSpan diff = DateTime.Now - lastLightCast;
-            if (diff.TotalMilliseconds >= lightCountdown)
+            if (CanLightningHit())
             {
                 for (var i = 0; i < lightRange / step; i++)
                 {
@@ -58,34 +75,18 @@ namespace CaesariumServer
             return hitCoords;
         }
 
-        public List<Coords> IceBarrierHit()
+        public bool CanBarrierHit()
         {
-            var direction = GetDirection();
-            List<Coords> hitCoords = new List<Coords>();
-
-
-
-            return hitCoords;
-        }
-
-        public Coords GetDirection()
-        {
-            return new Coords(X - prevMove.x, Y - prevMove.y);
-        }
-
-        public void SavePrevMove(Coords move)
-        {
-            prevMove.x = move.x;
-            prevMove.y = move.y;
-            madeMove = false;
+            TimeSpan diff = DateTime.Now - lastBarrierCast;
+            return diff.TotalMilliseconds >= barrCountdown;
         }
 
         public List<Coords> BarrierHit()
         {
             List<Coords> hitCoords = new List<Coords>();
 
-            TimeSpan diff = DateTime.Now - lastBarrierCast;
-            if (diff.TotalMilliseconds >= barrCountdown)
+
+            if (CanBarrierHit())
             {
                 int startX = X - barrRange/2;
                 int startY = Y - barrRange/2;

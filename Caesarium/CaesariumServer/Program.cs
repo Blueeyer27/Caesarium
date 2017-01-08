@@ -136,6 +136,8 @@ namespace CaesariumServer
             switch (skill)
             {
                 case "light":
+                    if (!attacker.CanLightningHit()) return;
+
                     foreach (var client in Clients)
                     {
                         client.unhandledSkills.Add(new Skill(skill, attacker.X, attacker.Y, attacker.lightRange, attacker.GetDirection()));
@@ -143,6 +145,8 @@ namespace CaesariumServer
                     }
                     break;
                 case "barr":
+                    if (!attacker.CanBarrierHit()) return;
+
                     foreach (var client in Clients)
                     {
                         client.unhandledSkills.Add(new Skill(skill, attacker.X, attacker.Y, attacker.barrRange));

@@ -52,11 +52,6 @@ namespace CaesariumClient.Controls.Battle
             lastReq = DateTime.Now;
         }
 
-        public void LightningHit()
-        {
-
-        }
-
         public void AnimateMove(int x, int y)
         {
             if (Dead) { Sprite.Source = DeadSprite.Source; return; }

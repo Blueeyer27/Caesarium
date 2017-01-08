@@ -9,12 +9,14 @@ namespace CaesariumServer
     public class PlayerInstance : ObjectInstance
     {
         public int step = 8;
+
         public int lightRange = 300, lightCountdown = 1000;
         public double lightDmg = 3;
         private DateTime lastLightCast = DateTime.Now.AddHours(-1);
 
-        public int barrerRange = 60;
-        public double barrerDmg = 1.5;
+        public int barrRange = 100, barrCountdown = 3000;
+        public double barrDmg = 1.5;
+        private DateTime lastBarrierCast = DateTime.Now.AddHours(-1);
 
         public bool madeMove = false;
 
@@ -71,11 +73,35 @@ namespace CaesariumServer
             return new Coords(X - prevMove.x, Y - prevMove.y);
         }
 
-        internal void SavePrevMove(Coords move)
+        public void SavePrevMove(Coords move)
         {
             prevMove.x = move.x;
             prevMove.y = move.y;
             madeMove = false;
+        }
+
+        public List<Coords> BarrierHit()
+        {
+            List<Coords> hitCoords = new List<Coords>();
+
+            TimeSpan diff = DateTime.Now - lastBarrierCast;
+            if (diff.TotalMilliseconds >= barrCountdown)
+            {
+                int startX = X - barrRange/2;
+                int startY = Y - barrRange/2;
+
+                for (var x = 0; x < barrRange; x++)
+                {
+                    for (var y = 0; y < barrRange; y++)
+                    {
+                        hitCoords.Add(new Coords(startX + x, startY + y));
+                    }
+                }
+
+                lastBarrierCast = DateTime.Now;
+            }
+
+            return hitCoords;
         }
     }
 }

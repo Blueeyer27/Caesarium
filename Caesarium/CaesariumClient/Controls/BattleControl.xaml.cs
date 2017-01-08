@@ -25,12 +25,15 @@ namespace CaesariumClient.Controls
     public partial class BattleControl : UserControl
     {
         List<PlayerInstance> players = new List<PlayerInstance>();
+        List<Skill> displayedSkills = new List<Skill>();
 
         Dictionary<string, bool> actionKeys = new Dictionary<string, bool>();
 
         int step = 8;
 
         String[] spriteFilenames = new String[4];
+
+        string appPath;
 
         UserControl objectsField;
         public BattleControl()
@@ -46,38 +49,19 @@ namespace CaesariumClient.Controls
             players.Add(new PlayerInstance(new Image()));
             players.Add(new PlayerInstance(new Image()));
 
-            string path = Directory.GetCurrentDirectory();
-            path = path.Substring(0, path.Length - 10);
+            appPath = Directory.GetCurrentDirectory();
+            appPath = appPath.Substring(0, appPath.Length - 10);
 
             foreach (var player in players)
             {
-                player.AllSpriteStates = CreateObjectImage(path + @"\Images\Objects\skin" + player.skinNumber + ".png", 144, 192);
-                player.DeadSprite = CreateObjectImage(path + @"\Images\Objects\dead.png", 48, 48);
+                player.AllSpriteStates = CreateObjectImage(appPath + @"\Images\Objects\skin" + player.skinNumber + ".png", 144, 192);
+                player.DeadSprite = CreateObjectImage(appPath + @"\Images\Objects\dead.png", 48, 48);
 
-                player.Sprite = CreateObjectImage(path + @"\Images\Objects\skin" + player.skinNumber + ".png", 48, 48);
+                player.Sprite = CreateObjectImage(appPath + @"\Images\Objects\skin" + player.skinNumber + ".png", 48, 48);
                 player.Sprite.Source = new CroppedBitmap(player.AllSpriteStates.Source as BitmapSource, new Int32Rect(0, 0, 48, 48));
 
                 AddBattleObject(0, 0, player.Sprite);            
             }
-
-            //players[0].Sprite = CreateObjectImage(@"\Images\Objects\admin.gif", 45, 45);
-            //players[2].Sprite = CreateObjectImage(@"\Images\Objects\DD2_Warrior_Sprite.png", 45, 45);
-            //players[1].Sprite = CreateObjectImage(@"\Images\Objects\admin.gif", 45, 45);
-            //players[3].Sprite = CreateObjectImage(@"\Images\Objects\DD2_Warrior_Sprite.png", 45, 45);
-
-            players[0].Lightning = CreateObjectImage(@"\Images\Skills\lightning.png", 500, 1200);
-            players[0].Lightning.Clip = new RectangleGeometry { Rect = new Rect(0, 5, 80, 1200) };
-            //BitmapSource bs = BitmapSource.Create()
-            players[0].IceBarrier = CreateObjectImage(path + @"\Images\Skills\ice_barrier.png", 200, 350);
-            players[0].IceBarrier.Source = new CroppedBitmap(players[0].IceBarrier.Source as BitmapSource, new Int32Rect(275, 0, 130, 90));
-            //players[0].IceBarrier.Clip = new RectangleGeometry { Rect = new Rect(370, 0, 350, 230) };
-
-            //player.Stretch = Stretch.None;
-
-            //AddBattleObject(0, 0, players[0].Sprite);
-            //AddBattleObject(0, 0, players[1].Sprite);
-            //AddBattleObject(0, 0, players[2].Sprite);
-            //AddBattleObject(0, 0, players[3].Sprite);
         }
 
         private void InitializeKeys()
@@ -105,9 +89,34 @@ namespace CaesariumClient.Controls
         private void battleFieldGrid_Loaded(object sender, RoutedEventArgs e)
         {
             //Timer timer = new Timer(MakeAsyncMove, null, 0, 100);
+            CreateTimer(MakeAction, 10);
+            CreateTimer(CheckDisplayedSkills, 50);
+        }
+
+        private void CheckDisplayedSkills(object sender, EventArgs e)
+        {
+            var skillsCopy = new List<Skill>();
+            foreach (var skill in displayedSkills)
+            {
+                if (skill.CanRemoveAnimation())
+                {
+                    RemoveBattleObject(skill.Sprite);
+                }
+                else
+                {
+                    skill.Animate();
+                    skillsCopy.Add(skill);
+                }
+            }
+
+            displayedSkills = skillsCopy;
+        }
+
+        private void CreateTimer(Action<object, EventArgs> action, int milliseconds)
+        {
             System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
-            dispatcherTimer.Tick += new EventHandler(MakeAction);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
+            dispatcherTimer.Tick += new EventHandler(action);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, milliseconds);
             dispatcherTimer.Start();
         }
 
@@ -149,20 +158,6 @@ namespace CaesariumClient.Controls
 
             if (actionKeys.ContainsKey(key))
                 actionKeys[key] = true;
-
-            switch (e.Key)
-            {
-                case Key.Q:
-
-                    break;
-                case Key.E:
-                    RemoveBattleObject(players[0].Lightning);
-                    RemoveBattleObject(players[0].IceBarrier);
-                    //players[0].Lightning.RenderTransform = new RotateTransform(angle);
-                    AddBattleObject(players[0].x - 120, players[0].y - 50, players[0].IceBarrier);
-                    //angle -= 10;
-                    break;
-            }
         }
 
         private void MakeAction(object sender, EventArgs e)
@@ -241,16 +236,34 @@ namespace CaesariumClient.Controls
                         i += 2;
                     }
                 }
-                if (objectData.Length > 1 && objectData[1].Length > 0)
+
+                for (var i = 1; i < objectData.Length; i++)
                 {
-                    var LightingData = objectData[1].Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-                    RemoveBattleObject(players[0].Lightning);
-                    RemoveBattleObject(players[0].IceBarrier);
-                    players[0].Lightning.RenderTransform = new RotateTransform(CountAngle(LightingData[3], LightingData[4]));
-                    players[0].Lightning.Height = int.Parse(LightingData[5]);
-                    AddBattleObject(int.Parse(LightingData[1]) + 25, int.Parse(LightingData[2]) + 25, players[0].Lightning);
+                    if (objectData[i].Length <= 0) continue;
 
+                    var skill = objectData[i].Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (skill.Length < 6) continue;
 
+                    switch (skill[0])
+                    {
+                        case "light":
+                            Skill lightning = new Skill(CreateObjectImage(appPath + @"\Images\Skills\lightning.png", int.Parse(skill[5]), 40), 249, 59, 6);
+                            lightning.Sprite = CreateObjectImage(appPath + @"\Images\Skills\lightning.png", int.Parse(skill[5]), 40);
+                            lightning.Sprite.Stretch = Stretch.Fill;
+                            lightning.SetAngle(CountAngle(skill[3], skill[4]), 20);
+
+                            displayedSkills.Add(lightning);
+                            AddBattleObject(int.Parse(skill[1]), int.Parse(skill[2]) + 25, lightning.Sprite);
+                            break;
+                        case "barr":
+                            Skill iceBarrier = new Skill(CreateObjectImage(appPath + @"\Images\Skills\ice_barrier.png", 90, 136), 90, 136, 5);
+                            iceBarrier.Sprite = CreateObjectImage(appPath + @"\Images\Skills\ice_barrier.png", 200, 200);
+                            iceBarrier.Sprite.Stretch = Stretch.Fill;
+
+                            displayedSkills.Add(iceBarrier);
+                            AddBattleObject(int.Parse(skill[1]) - 70, int.Parse(skill[2]) - 70, iceBarrier.Sprite);
+                            break;
+                    }
                 }
             }
 

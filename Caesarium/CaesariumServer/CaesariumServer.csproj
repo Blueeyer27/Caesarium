@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Battle\BattleField.cs" />
+    <Compile Include="Battle\Skill.cs" />
     <Compile Include="DB\CaesariumDatabase.cs" />
     <Compile Include="Instances\ObjectInstance.cs" />
     <Compile Include="Instances\PlayerInstance.cs" />

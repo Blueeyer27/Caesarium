@@ -1,3 +1,4 @@
+using CaesariumServer.Battle;
 //using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -96,7 +97,6 @@ namespace CaesariumServer
 
     public class Game
     {
-        public String LightningObject = ""; //TODO: Should be added to list in battlefield objects
         public int MaxPlayers { get; set; } //TODO:
         public BattleField gameField;
         public List<GameClient> Clients = new List<GameClient>();
@@ -130,12 +130,36 @@ namespace CaesariumServer
                     }
             }
         }
+
+        internal void SkillUse(string skill, GameClient sender, PlayerInstance attacker)
+        {
+            switch (skill)
+            {
+                case "light":
+                    foreach (var client in Clients)
+                    {
+                        client.unhandledSkills.Add(new Skill(skill, attacker.X, attacker.Y, attacker.lightRange, attacker.GetDirection()));
+                        HitOpponents(sender, attacker.LightningHit());
+                    }
+                    break;
+                case "barr":
+                    foreach (var client in Clients)
+                    {
+                        client.unhandledSkills.Add(new Skill(skill, attacker.X, attacker.Y, attacker.barrRange));
+                        HitOpponents(sender, attacker.BarrierHit());
+                    }
+                    break;
+            }
+        }
     }
 
     public class GameClient
     {
         public Thread ClientThread { get; set; }
         public List<PlayerInstance> Players;
+
+        public List<Skill> unhandledSkills;
+
         Game currGame;
 
         public TcpClient client;
@@ -146,8 +170,8 @@ namespace CaesariumServer
             this.id = id;
             this.client = client;
 
-
             Players = new List<PlayerInstance>();
+            unhandledSkills = new List<Skill>();
         }
 
         public void SetCurrentGame(Game currGame)
@@ -215,22 +239,32 @@ namespace CaesariumServer
                         //Console.WriteLine(id + "  " + counter);
                         lastReq = DateTime.Now;
 
-                        currGame.LightningObject = MakeMove(args);
+                        MakeMove(args);
 
                         data = Encoding.Unicode.GetBytes(responseSb.ToString());
                         stream.Write(data, 0, data.Length);
                     }
                     else if (func == "getObj")
                     {
-                        //TODO: REMOVE THIS!!!!!!! 
                         foreach (var gameClient in currGame.Clients)
                             foreach (var player in gameClient.Players)
                                 if (player.Dead) responseSb.Append("-1:-1/");
                                 else responseSb.Append(player.X + ":" + player.Y + "/");
 
+                        if (unhandledSkills.Count > 0)
+                        {
+                            foreach (var skill in unhandledSkills)
+                            {
+                                responseSb.Append("#" + skill.name + ":" + skill.hitX + ":" + skill.hitY 
+                                    + ":" + skill.direction.x + ":" + skill.direction.y + ":" + skill.range + "#");
+                            }
+
+                            unhandledSkills.Clear();
+                        }
+
                         var resp = responseSb.ToString();
 
-                        data = Encoding.Unicode.GetBytes(resp + currGame.LightningObject);
+                        data = Encoding.Unicode.GetBytes(resp);
                         stream.Write(data, 0, data.Length);
                     }
                     else
@@ -318,15 +352,13 @@ namespace CaesariumServer
             {
                 switch (ch)
                 {
-                    //Skills
                     case 'C':
                         if (!Players[0].Dead)
-                        {
-                            currGame.HitOpponents(this, Players[0].LightningHit());
-                            answer += "#LIGHTNING:" + Players[0].X + ":" + Players[0].Y + ":" + Players[0].GetDirection().x + ":" + Players[0].GetDirection().y + ":" + Players[0].lightRange + "#";
-                        }
+                            currGame.SkillUse("light", this, Players[0]);
                         break;
                     case 'V':
+                        if (!Players[0].Dead)
+                            currGame.SkillUse("barr", this, Players[0]);
                         break;
                     case 'N':
                         break;

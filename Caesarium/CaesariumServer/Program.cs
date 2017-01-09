@@ -107,11 +107,11 @@ namespace CaesariumServer
         }
 
         //TODO: Move this function to battlefield
-        public void HitOpponents(GameClient sender, List<Coords> hitCoords, int damage)
+        public void HitOpponents(PlayerInstance attacker, List<Coords> hitCoords, int damage)
         {
             foreach (var client in Clients)
             {
-                if (client != sender)
+                if (client != attacker.Client)
                     foreach (var opponent in client.Players)
                     {
                         foreach (var coord in hitCoords)
@@ -119,11 +119,11 @@ namespace CaesariumServer
                             if (coord.x <= opponent.X + 27 && coord.x >= opponent.X - 27
                                 && coord.y <= opponent.Y + 27 && coord.y >= opponent.Y - 27)
                             {
-                                opponent.Hp -= damage;
+                                opponent.Hp -= damage * attacker.Power;
                                 if (opponent.Hp <= 0)
                                     opponent.Dead = true;
                                 Console.WriteLine(opponent.Name + "  HP: " + opponent.Hp + "/60  coords: X = " + opponent.X + " Y = " + opponent.Y
-                                    + "\nAttacker coords: X = " + sender.Players[0].X + " Y = " + sender.Players[0].Y);
+                                    + "\nAttacker coords: X = " + attacker.X + " Y = " + attacker.Y);
                                 break;
                             }
                         }
@@ -131,7 +131,7 @@ namespace CaesariumServer
             }
         }
 
-        internal void SkillUse(string skill, GameClient sender, PlayerInstance attacker)
+        internal void SkillUse(string skill, PlayerInstance attacker)
         {
             switch (skill)
             {
@@ -141,7 +141,7 @@ namespace CaesariumServer
                     foreach (var client in Clients)
                     {
                         client.unhandledSkills.Add(new Skill(skill, attacker.X, attacker.Y, attacker.lightRange, attacker.GetDirection()));
-                        HitOpponents(sender, attacker.LightningHit(), attacker.lightDmg);
+                        HitOpponents(attacker, attacker.LightningHit(), attacker.lightDmg);
                     }
                     break;
                 case "barr":
@@ -150,7 +150,7 @@ namespace CaesariumServer
                     foreach (var client in Clients)
                     {
                         client.unhandledSkills.Add(new Skill(skill, attacker.X, attacker.Y, attacker.barrRange));
-                        HitOpponents(sender, attacker.BarrierHit(), attacker.barrDmg);
+                        HitOpponents(attacker, attacker.BarrierHit(), attacker.barrDmg);
                     }
                     break;
             }
@@ -187,8 +187,8 @@ namespace CaesariumServer
         {
             if (Players.Count == 0)
             {
-                Players.Add(new PlayerInstance("Antowa" + id, new char[] { 'W', 'A', 'S', 'D' }, new char[] { 'C', 'V' }));
-                Players.Add(new PlayerInstance("Anton" + id, new char[] { 'I', 'J', 'K', 'L' }, new char[] { 'N', 'B' }));
+                Players.Add(new PlayerInstance("Player1_" + id, this, new BattleControls('W', 'S', 'A', 'D', 'C', 'V')));
+                Players.Add(new PlayerInstance("Player2_" + id, this, new BattleControls('I', 'K', 'J', 'L', 'N', 'B')));
             }
         }
 
@@ -298,22 +298,22 @@ namespace CaesariumServer
 
                 foreach (var ch in args)
                 {
-                    if (ch == player.moveButtons[0])
+                    if (ch == player.Controls.Up)
                     {
                         player.Y -= player.step;
                         player.madeMove = true;
                     }
-                    else if (ch == player.moveButtons[1])
+                    else if (ch == player.Controls.Left)
                     {
                         player.X -= player.step;
                         player.madeMove = true;
                     }
-                    else if (ch == player.moveButtons[2])
+                    else if (ch == player.Controls.Down)
                     {
                         player.Y += player.step;
                         player.madeMove = true;
                     }
-                    else if (ch == player.moveButtons[3])
+                    else if (ch == player.Controls.Right)
                     {
                         player.X += player.step;
                         player.madeMove = true;
@@ -326,10 +326,10 @@ namespace CaesariumServer
                 foreach (var ch in args)
                 {
                     if (!player.Dead)
-                        if (ch == player.skillButtons[0])
-                            currGame.SkillUse("light", this, player);
-                        else if (ch == player.skillButtons[1])
-                            currGame.SkillUse("barr", this, player);
+                        if (ch == player.Controls.MainSkill)
+                            currGame.SkillUse("light", player);
+                        else if (ch == player.Controls.MassiveSkill)
+                            currGame.SkillUse("barr", player);
                 }
             }
         }

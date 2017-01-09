@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Battle\BattleControls.cs" />
     <Compile Include="Battle\BattleField.cs" />
     <Compile Include="Battle\Skill.cs" />
     <Compile Include="DB\CaesariumDatabase.cs" />

@@ -1,3 +1,4 @@
+using CaesariumServer.Battle;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,25 +12,25 @@ namespace CaesariumServer
         public int step = 8;
 
         public int lightRange = 300, lightCountdown = 500;
-        public int lightDmg = 15;
+        public int lightDmg = 3;
         private DateTime lastLightCast = DateTime.Now.AddHours(-1);
 
-        public char[] moveButtons;
-        public char[] skillButtons;
+        public BattleControls Controls { get; set; }
+        public GameClient Client { get; set; }
 
         public int barrRange = 100, barrCountdown = 3000;
-        public int barrDmg = 10;
+        public int barrDmg = 2;
         private DateTime lastBarrierCast = DateTime.Now.AddHours(-1);
 
         public bool madeMove = false;
 
         public int Power { get; set; }
 
-        public PlayerInstance(string name, char[] moveButtons, char[] skillButtons, int x = 0, int y = 0, int hp = 60, int power = 10)
+        public PlayerInstance(string name, GameClient client, BattleControls controls, int x = 0, int y = 0, int hp = 60, int power = 5)
             : base(name, x, y, hp)
         {
-            this.moveButtons = moveButtons;
-            this.skillButtons = skillButtons;
+            Client = client;
+            Controls = controls;
             Power = power;
         }
 

@@ -226,7 +226,7 @@ namespace CaesariumClient.Controls
         {
             byte[] data = Encoding.Unicode.GetBytes("getObj:0;");
             ServerConnect.stream.Write(data, 0, data.Length);
-            string positions = ReadServerAnswer().Trim();
+            string positions = ServerConnect.ReadServerAnswer().Trim();
             if (positions.Length > 0)
             {
                 var objectData = positions.Split(new char[] { '#' }, StringSplitOptions.RemoveEmptyEntries);
@@ -283,21 +283,6 @@ namespace CaesariumClient.Controls
                     }
                 }
             }
-        }
-
-        private string ReadServerAnswer()
-        {
-            byte[] data = new byte[64];
-            StringBuilder builder = new StringBuilder("");
-            int bytes = 0;
-
-            while (ServerConnect.stream.DataAvailable)
-            {
-                bytes = ServerConnect.stream.Read(data, 0, data.Length);
-                builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
-            }
-
-            return builder.ToString().Trim();
         }
     }
 }

@@ -22,6 +22,23 @@ namespace CaesariumClient
     {
         public static TcpClient client;
         public static NetworkStream stream;
+
+        public static int clientID;
+
+        public static string ReadServerAnswer()
+        {
+            byte[] data = new byte[64];
+            StringBuilder builder = new StringBuilder("");
+            int bytes = 0;
+
+            while (stream.DataAvailable)
+            {
+                bytes = stream.Read(data, 0, data.Length);
+                builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
+            }
+
+            return builder.ToString().Trim();
+        }
     }
 
     /// <summary>
@@ -30,17 +47,11 @@ namespace CaesariumClient
     public partial class MainWindow : Window
     {
         Dictionary<String, Control> controls;
-        const int port = 6112;
-        const string address = "127.0.0.1";
 
         public MainWindow()
         {
             InitializeComponent();
             InitializeControls();
-
-            ServerConnect.client = new TcpClient();
-            ServerConnect.client.Connect(new IPEndPoint(IPAddress.Parse(address), port));
-            ServerConnect.stream = ServerConnect.client.GetStream();
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -53,6 +64,11 @@ namespace CaesariumClient
 
                 if (item.Name != "AppControlItem")
                     this.KeyDown -= ((BattleControl)controls["AppControlItem"]).contentControl_KeyDown;
+                else
+                {
+                    byte[] data = Encoding.Unicode.GetBytes("startGame:0");
+                    ServerConnect.stream.Write(data, 0, data.Length);
+                }
             }
         }
 
@@ -60,7 +76,6 @@ namespace CaesariumClient
         {
             controls = new Dictionary<String, Control>();
             controls.Add("MainControlItem", new MainControl());
-            controls.Add("LoginControlItem", new LoginControl());
             //controls.Add("AppControlItem", new AppsControl());
             controls.Add("AppControlItem", new BattleControl());
             controls.Add("StoreControlItem", new StoreControl());

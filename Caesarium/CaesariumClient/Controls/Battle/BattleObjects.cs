@@ -16,13 +16,17 @@ namespace CaesariumClient.Controls
         private void AddBattleObject(int x, int y, Image obj) {
             Grid.SetColumn(obj, 0);
             Grid.SetRow(obj, 0);
-
+            Label label = new Label();
+            label.Content = "-10";
+            Grid.SetColumn(label, 0);
+            Grid.SetRow(label, 0);
             var margin = obj.Margin;
             margin.Left = x;
             margin.Top = y;
             obj.Margin = margin;
 
             objectFieldGrid.Children.Add(obj);
+            objectFieldGrid.Children.Add(label);
         }
 
         private void MoveBattleObject(int x, int y, Image obj)

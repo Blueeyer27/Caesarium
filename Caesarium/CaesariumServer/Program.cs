@@ -49,7 +49,7 @@ namespace CaesariumServer
                 listener.Start();
                 Console.WriteLine("Waiting for connections...");
 
-                games.Add(new Game(new BattleField(), 4));
+                games.Add(new Game(new BattleField(), 2));
 
                 int id = 0;
                 while (true)
@@ -57,10 +57,14 @@ namespace CaesariumServer
                     GameClient client = new GameClient(listener.AcceptTcpClient(), id);
                     id++;
 
-                    if (games[games.Count - 1].Clients.Count < games[games.Count - 1].MaxPlayers)
+                    var lastGame = games[games.Count - 1];
+                    if (lastGame.Clients.Count < lastGame.MaxPlayers)
                     {
-                        games[games.Count - 1].Clients.Add(client);
-                        client.SetCurrentGame(games[games.Count - 1]);
+                        if (lastGame.Clients.Count > 0)
+                            client.StartCoords = new Coords(840, 480);
+
+                        lastGame.Clients.Add(client);
+                        client.SetCurrentGame(lastGame);
                     }
                     else
                     {
@@ -167,12 +171,14 @@ namespace CaesariumServer
         Game currGame;
 
         public TcpClient client;
+        public Coords StartCoords { get; set; }
         public int id;
 
         public GameClient(TcpClient client, int id)
         {
             this.id = id;
             this.client = client;
+            StartCoords = new Coords(0, 0);
 
             Players = new List<PlayerInstance>();
             unhandledSkills = new List<Skill>();
@@ -187,8 +193,8 @@ namespace CaesariumServer
         {
             if (Players.Count == 0)
             {
-                Players.Add(new PlayerInstance("Player1_" + id, this, new BattleControls('W', 'S', 'A', 'D', 'C', 'V')));
-                Players.Add(new PlayerInstance("Player2_" + id, this, new BattleControls('I', 'K', 'J', 'L', 'N', 'B')));
+                Players.Add(new PlayerInstance("Player1_" + id, this, new BattleControls('W', 'S', 'A', 'D', 'C', 'V'), StartCoords.x, StartCoords.y));
+                Players.Add(new PlayerInstance("Player2_" + id, this, new BattleControls('I', 'K', 'J', 'L', 'N', 'B'), StartCoords.x, StartCoords.y));
             }
         }
 

@@ -66,19 +66,42 @@ namespace CaesariumClient.Controls
 
         private void InitializeKeys()
         {
-            actionKeys.Add("A", false);
-            actionKeys.Add("S", false);
-            actionKeys.Add("D", false);
-            actionKeys.Add("W", false);
-            actionKeys.Add("I", false);
-            actionKeys.Add("J", false);
-            actionKeys.Add("K", false);
-            actionKeys.Add("L", false);
+            actionKeys.Add("A", false); //A
+            actionKeys.Add("S", false); //S
+            actionKeys.Add("D", false); //D
+            actionKeys.Add("W", false); //W
+            actionKeys.Add("I", false); //I
+            actionKeys.Add("J", false); //J
+            actionKeys.Add("K", false); //K
+            actionKeys.Add("L", false); //L
 
-            actionKeys.Add("C", false);
-            actionKeys.Add("V", false);
-            actionKeys.Add("N", false);
-            actionKeys.Add("B", false);
+            actionKeys.Add("C", false); //C
+            actionKeys.Add("V", false); //V
+            actionKeys.Add("N", false); //N
+            actionKeys.Add("B", false); //B
+        }
+
+        private string GetCommandByKey(Key key)
+        {
+            switch (key)
+            {
+                case Key.Down:
+                    return "B";
+                case Key.Right:
+                    return "N";
+                case Key.NumPad8:
+                    return "I";
+                case Key.NumPad4:
+                    return "J";
+                case Key.NumPad6:
+                    return "L";
+                case Key.NumPad5:
+                    return "K";
+                case Key.Space:
+                    return "C";
+            }
+
+            return key.ToString();
         }
 
         private void battleFieldGrid_Loaded(object sender, RoutedEventArgs e)
@@ -140,7 +163,7 @@ namespace CaesariumClient.Controls
 
         private void contentControl_KeyUp(object sender, KeyEventArgs e)
         {
-            var key = e.Key.ToString();
+            var key = GetCommandByKey(e.Key);
 
             if (actionKeys.ContainsKey(key))
                 actionKeys[key] = false;
@@ -148,7 +171,7 @@ namespace CaesariumClient.Controls
 
         public void contentControl_KeyDown(object sender, KeyEventArgs e)
         {
-            var key = e.Key.ToString();
+            var key = GetCommandByKey(e.Key);
 
             if (actionKeys.ContainsKey(key))
                 actionKeys[key] = true;

@@ -18,8 +18,8 @@
             </Menu.BorderBrush>
             <MenuItem x:Name="MainControlItem" Header="Main" Click="MenuItem_Click"/>
             <MenuItem x:Name="AppControlItem" Header="Applications" Click="MenuItem_Click"/>
-            <MenuItem Header="Items Store"/>
-            <MenuItem Header="Characters"/>
+            <MenuItem x:Name="StoreControlItem" Header="Items Store" Click="MenuItem_Click"/>
+            <MenuItem x:Name="CharControlItem" Header="Characters" Click="MenuItem_Click"/>
             <MenuItem Header="[Admin] Players"/>
             <MenuItem Header="[Admin] Craft"/>
         </Menu>

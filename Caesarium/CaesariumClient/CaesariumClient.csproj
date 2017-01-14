@@ -65,6 +65,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\CharactersControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\MainControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -95,6 +99,9 @@
     </Compile>
     <Compile Include="Controls\Battle\PlayerInstance.cs" />
     <Compile Include="Controls\Battle\Skill.cs" />
+    <Compile Include="Controls\CharactersControl.xaml.cs">
+      <DependentUpon>CharactersControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MainControl.xaml.cs">
       <DependentUpon>MainControl.xaml</DependentUpon>
     </Compile>
@@ -173,6 +180,25 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\login_bg.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\inventory_bg.jpg" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\Items\boots1.png" />
+    <Resource Include="Images\Items\boots2.png" />
+    <Resource Include="Images\Items\boots3.png" />
+    <Resource Include="Images\Items\boots4.png" />
+    <Resource Include="Images\Items\robe1.png" />
+    <Resource Include="Images\Items\robe2.png" />
+    <Resource Include="Images\Items\robe3.png" />
+    <Resource Include="Images\Items\robe4.png" />
+    <Resource Include="Images\Items\staff1.png" />
+    <Resource Include="Images\Items\staff2.png" />
+    <Resource Include="Images\Items\staff3.png" />
+    <Resource Include="Images\Items\staff4.png" />
+    <Resource Include="Images\Items\staff5.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

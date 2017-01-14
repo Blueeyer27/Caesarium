@@ -69,6 +69,9 @@ namespace CaesariumClient
                     byte[] data = Encoding.Unicode.GetBytes("startGame:0");
                     ServerConnect.stream.Write(data, 0, data.Length);
                 }
+
+                if (item.Name != "CharControlItem")
+                    this.MouseLeftButtonUp -= ((CharactersControl)controls["CharControlItem"]).UserControl_MouseLeftButtonUp;
             }
         }
 
@@ -76,6 +79,7 @@ namespace CaesariumClient
         {
             controls = new Dictionary<String, Control>();
             controls.Add("MainControlItem", new MainControl());
+            controls.Add("CharControlItem", new CharactersControl());
             //controls.Add("AppControlItem", new AppsControl());
             controls.Add("AppControlItem", new BattleControl());
             controls.Add("StoreControlItem", new StoreControl());

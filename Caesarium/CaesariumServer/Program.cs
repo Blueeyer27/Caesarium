@@ -84,6 +84,8 @@ namespace CaesariumServer
 
                     client.ClientThread.Start();
 
+                    if (lastGame.Clients.Count == lastGame.MaxPlayers)
+                        lastGame.started = true;
                 }
             }
             catch (Exception ex)
@@ -104,6 +106,9 @@ namespace CaesariumServer
         public int MaxPlayers { get; set; } //TODO:
         public BattleField gameField;
         public List<GameClient> Clients = new List<GameClient>();
+
+        public bool started = false;
+
         public Game(BattleField field, int maxPlayers = 2)
         {
             MaxPlayers = maxPlayers;
@@ -298,6 +303,8 @@ namespace CaesariumServer
 
         private void MakeMove(string args)
         {
+            if (!currGame.started) return;
+
             foreach (var player in Players)
             {
                 var prevMove = new Coords(player.X, player.Y);

@@ -108,6 +108,7 @@
     <Compile Include="Controls\StoreControl.xaml.cs">
       <DependentUpon>StoreControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Store\Item.cs" />
     <Compile Include="LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
@@ -204,6 +205,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\equip_bg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Textures\chest_opened.png" />
+    <Resource Include="Images\Textures\chest_closed.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

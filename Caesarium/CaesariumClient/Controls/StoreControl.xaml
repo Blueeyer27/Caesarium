@@ -4,8 +4,77 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="540" d:DesignWidth="890" Background="YellowGreen">
+             d:DesignHeight="540" d:DesignWidth="890">
+    <UserControl.Resources>
+        <Style x:Key="noHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="Visibility" Value="Collapsed" />
+        </Style>
+        <Style x:Key="chestLabelStyle" TargetType="{x:Type Label}">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <ImageBrush ImageSource="..\Images\Textures\chest_closed.png">
+                        
+                    </ImageBrush>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True" >
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <ImageBrush ImageSource="..\Images\Textures\chest_opened.png">
+
+                            </ImageBrush>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
     <Grid>
-            
+        <ListView x:Name="shopListView" HorizontalAlignment="Left" ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                  ScrollViewer.VerticalScrollBarVisibility="Disabled" Height="490" Margin="232,10,0,0" 
+                  VerticalAlignment="Top" Width="597" Background="#FF778D52" Opacity="0.85">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListViewItem">
+                                <Border CornerRadius="2" SnapsToDevicePixels="True"
+                                        BorderThickness="{TemplateBinding     BorderThickness}" 
+                                        BorderBrush="{TemplateBinding BorderBrush}" 
+                                        Background="{TemplateBinding Background}">
+                                    <Border Name="InnerBorder" CornerRadius="1"   BorderThickness="1">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition MaxHeight="11" />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <Rectangle Name="UpperHighlight" Visibility="Collapsed" Fill="#75FFFFFF" />
+                                            <GridViewRowPresenter Grid.RowSpan="2" 
+                                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                        </Grid>
+                                    </Border>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FFBDC168"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.View>
+                <GridView AllowsColumnReorder="False" ColumnHeaderContainerStyle="{StaticResource noHeaderStyle}" >
+                    <GridView.ColumnHeaderContextMenu>
+                        <ContextMenu AllowDrop="True" IsEnabled="False" IsHitTestVisible="False" MaxHeight="0" MaxWidth="0" Opacity="0" StaysOpen="False"/>
+                    </GridView.ColumnHeaderContextMenu>
+                    <GridViewColumn/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
     </Grid>
 </UserControl>

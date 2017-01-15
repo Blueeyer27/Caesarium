@@ -20,15 +20,19 @@ namespace CaesariumClient.Controls.Store
         public int Defence { get; set; }
         public int Hp { get; set; }
 
+        // 1 - weapon; 2 - armor; 3 - boots
+        public int Type { get; set; }
+
         public Label ImageLabel { get; set; }
 
-        public Item(long id, string name, string imageName, int power = 0, int defence = 0, int hp = 0)
+        public Item(long id, string name, string imageName, int type, int power = 0, int defence = 0, int hp = 0)
         {
             string appPath = Directory.GetCurrentDirectory();
             appPath = appPath.Substring(0, appPath.Length - 10);
 
             ID = id;
             Name = name;
+            Type = type;
 
             ImageLabel = new Label()
             {

@@ -13,7 +13,7 @@
             <Setter Property="Background">
                 <Setter.Value>
                     <ImageBrush ImageSource="..\Images\Textures\chest_closed.png">
-                        
+
                     </ImageBrush>
                 </Setter.Value>
             </Setter>
@@ -32,7 +32,7 @@
     </UserControl.Resources>
     <Grid>
         <ListView x:Name="shopListView" HorizontalAlignment="Left" ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                  ScrollViewer.VerticalScrollBarVisibility="Disabled" Height="490" Margin="232,10,0,0" 
+                  ScrollViewer.VerticalScrollBarVisibility="Disabled" Height="490" Margin="259,10,0,0" 
                   VerticalAlignment="Top" Width="597" Background="#FF778D52" Opacity="0.85">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
@@ -75,6 +75,16 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <Menu HorizontalAlignment="Left" Height="262" Margin="37,10,0,0" VerticalAlignment="Top" Width="217" Background="#FF778D52" Opacity="0.85">
+            <MenuItem x:Name="WeaponsMenuItem" Header="Weapons" FontSize="20" FontWeight="Bold" Width="217" Click="MenuItem_Click"/>
+            <MenuItem x:Name="ArmorsMenuItem" Header="Armors" FontSize="20" FontWeight="Bold" Width="217" Click="MenuItem_Click"/>
+            <MenuItem x:Name="BootsMenuItem" Header="Boots" FontSize="20" FontWeight="Bold" Width="217" Click="MenuItem_Click"/>
+            <MenuItem x:Name="StuffMenuItem" Header="All stuff" FontSize="20" FontWeight="Bold" Width="217" Click="MenuItem_Click"/>
+            <MenuItem x:Name="ElixirsMenuItem"  Header="Elixirs" FontSize="20" FontWeight="Bold" Width="217" Click="MenuItem_Click"/>
+            <MenuItem x:Name="SellMenuItem" Header="Sell" FontSize="20" FontWeight="Bold" Width="217" Click="MenuItem_Click"/>
+            <Label Content="Balance: 99999 gold" FontSize="20" FontWeight="Bold" Height="65" 
+                   Width="210" Foreground="#FFDAAD4D" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+        </Menu>
 
     </Grid>
 </UserControl>

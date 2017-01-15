@@ -1,4 +1,4 @@
-﻿using CaesariumClient.Controls.Store;
+using CaesariumClient.Controls.Store;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,20 +28,7 @@ namespace CaesariumClient.Controls
             InitializeComponent();
             storeItems = LoadItems();
 
-            for (var i = 0; i < storeItems.Count; i++)
-            {
-                var border = new Border()
-                {
-                    BorderBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0)),
-                    BorderThickness = new Thickness(2)
-                };
-                
-                var grid = CreateProductGrid(1, 4, 125, 125);
-                AddItemToGrid(grid, storeItems[i]);
-
-                border.Child = grid;
-                shopListView.Items.Add(border);
-            }
+            ShowItems();
         }
 
         public void AddItemToGrid(Grid grid, Item item) 
@@ -109,6 +96,7 @@ namespace CaesariumClient.Controls
                 HorizontalAlignment = HorizontalAlignment.Center
             };
             purchaseLabel.Style = (Style)Resources["chestLabelStyle"];
+            //purchaseLabel.MouseLeftButtonDown +=
             Grid.SetColumn(purchaseLabel, 3);
             grid.Children.Add(purchaseLabel);
         }
@@ -146,20 +134,83 @@ namespace CaesariumClient.Controls
             var itemList = new List<Item>();
             for (var i = 1; i < 6; i++)
             {
-                itemList.Add(new Item(i, "Infinity Staff" + i, "staff" + i + ".png", i, i + 1, i + 2));
+                itemList.Add(new Item(i, "Infinity Staff" + i, "staff" + i + ".png", 1, i, i + 1, i + 2));
             }
 
             for (var i = 1; i < 5; i++)
             {
-                itemList.Add(new Item(i, "Boots of Asgard" + i, "boots" + i + ".png", i, i + 1, i + 2));
+                itemList.Add(new Item(i, "Boots of Asgard" + i, "boots" + i + ".png", 3, i, i + 1, i + 2));
             }
 
             for (var i = 1; i < 5; i++)
             {
-                itemList.Add(new Item(i, "Destorus Robe" + i, "robe" + i + ".png", i, i + 1, i + 2));
+                itemList.Add(new Item(i, "Destorus Robe" + i, "robe" + i + ".png", 2, i, i + 1, i + 2));
             }
 
             return itemList;
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var itemName = ((MenuItem)sender).Name;
+
+            switch (itemName)
+            {
+                case "WeaponsMenuItem":
+                    ShowItems(1);
+                    break;
+                case "ArmorsMenuItem":
+                    ShowItems(2);
+                    break;
+                case "BootsMenuItem":
+                    ShowItems(3);
+                    break;
+                case "StuffMenuItem":
+                    ShowItems();
+                    break;
+                case "ElixirsMenuItem":
+                    ShowItems(4);
+                    break;
+                case "SellMenuItem":
+                    ShowItems(4);
+                    break;
+            }
+        }
+
+        List<Grid> tmpGrids = new List<Grid>();
+        private void ShowItems(int type = -1)
+        {
+            ClearItems();
+
+            for (var i = 0; i < storeItems.Count; i++)
+            {
+                if (type != -1 && type != storeItems[i].Type)
+                    continue;
+
+                var border = new Border()
+                {
+                    BorderBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0)),
+                    BorderThickness = new Thickness(2)
+                };
+
+                var grid = CreateProductGrid(1, 4, 125, 125);
+                AddItemToGrid(grid, storeItems[i]);
+
+                border.Child = grid;
+                shopListView.Items.Add(border);
+                tmpGrids.Add(grid);
+            }
+        }
+
+        private void ClearItems()
+        {
+            shopListView.Items.Clear();
+            foreach(var grid in tmpGrids)
+            {
+                grid.Children.Clear();
+            }
+
+            tmpGrids.Clear();
         }
     }
 }

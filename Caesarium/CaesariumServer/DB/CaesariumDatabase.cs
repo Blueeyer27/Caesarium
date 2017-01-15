@@ -35,6 +35,45 @@ namespace CaesariumServer
              `Password` char(32) NOT NULL,
              PRIMARY KEY (`ID`)) 
              ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;");
+
+            ExecuteQuery(@"CREATE TABLE IF NOT EXISTS `equipment` (
+             `ID` int(11) NOT NULL AUTO_INCREMENT,
+             `Name` char(32) NOT NULL,
+             `Power` int(11) NOT NULL,
+             `Defence` int(11) NOT NULL,
+             `Hp` int(11) NOT NULL,
+             `Type` int(11) NOT NULL,
+             `Price` int(11) NOT NULL,
+             PRIMARY KEY (`ID`)) 
+             ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;");
+
+            ExecuteQuery(@"CREATE TABLE IF NOT EXISTS `players` (
+             `ID` int(11) NOT NULL AUTO_INCREMENT,
+             `AccID` int(11) NOT NULL,
+             `Name` char(32) NOT NULL,
+             `Power` int(11) NOT NULL,
+             `Defence` int(11) NOT NULL,
+             `Hp` int(11) NOT NULL,
+             PRIMARY KEY (`ID`),
+             FOREIGN KEY (`AccID`) REFERENCES `accounts` (`ID`)
+                ON DELETE CASCADE
+                ON UPDATE CASCADE) 
+             ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;");
+
+            ExecuteQuery(@"CREATE TABLE IF NOT EXISTS `inventory` (
+             `ID` int(11) NOT NULL AUTO_INCREMENT,
+             `PlayerID` int(11) NOT NULL,
+             `EquipID` int(11) NOT NULL,
+             `Equipted` BOOLEAN NOT NULL DEFAULT 0,
+             PRIMARY KEY (`ID`),
+             FOREIGN KEY (`PlayerID`) REFERENCES `players` (`ID`)
+                ON DELETE CASCADE
+                ON UPDATE CASCADE,
+             FOREIGN KEY (`EquipID`) REFERENCES `equipment` (`ID`)
+                ON DELETE CASCADE
+                ON UPDATE CASCADE) 
+             ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;");
+
             return true;
         }
 

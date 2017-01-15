@@ -71,6 +71,7 @@ namespace CaesariumServer.Modules
                     } while (stream.DataAvailable);
 
                     string message = builder.ToString();
+                    Console.WriteLine(message + "   " + id);
                     var commands = message.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                     var funcWithArgs = commands[0].Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                     var func = funcWithArgs[0];
@@ -129,6 +130,7 @@ namespace CaesariumServer.Modules
                         {
                             var logPwd = args.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
                             responseSb.Append(Login(logPwd[0], logPwd[1]));
+                            this.id = int.Parse(responseSb.ToString());
                         }
                     }
 
@@ -168,8 +170,6 @@ namespace CaesariumServer.Modules
             else
             {
                 var id = answer[0];
-                this.id = int.Parse(id);
-
                 var dbPassword = answer[2];
 
                 return dbPassword.CompareTo(password) == 0 ? id : "0";

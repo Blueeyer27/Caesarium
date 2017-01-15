@@ -184,7 +184,9 @@
   <ItemGroup>
     <Resource Include="Images\inventory_bg.jpg" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\char_bg.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Items\boots1.png" />
     <Resource Include="Images\Items\boots2.png" />
@@ -199,6 +201,9 @@
     <Resource Include="Images\Items\staff3.png" />
     <Resource Include="Images\Items\staff4.png" />
     <Resource Include="Images\Items\staff5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\equip_bg.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -21,32 +21,73 @@ namespace CaesariumClient.Controls
     /// </summary>
     public partial class CharactersControl : UserControl
     {
+        List<Grid> equipment = new List<Grid>();
+        string appPath = Directory.GetCurrentDirectory();
+            
         public CharactersControl()
         {
             InitializeComponent();
-            MakeInventory(3, 6, 70, 70);
-            FillGrid(Inventory);
-            this.Content = Inventory;
-            this.MouseMove += new MouseEventHandler(Inventory_MouseMove);
+            appPath = appPath.Substring(0, appPath.Length - 10);
+            //MakeInventory(3, 6, 55, 55);
+            //FillGrid(Inventory);
+            
+
+            //this.Content = Inventory;
+            //this.MouseMove += new MouseEventHandler(Inventory_MouseMove);
+            equipment.Add(leftWeaponGrid);
+            equipment.Add(leftArmorGrid);
+            equipment.Add(leftBootsGrid);
+
+            equipment.Add(rightWeaponGrid);
+            equipment.Add(rightArmorGrid);
+            equipment.Add(rightBootsGrid);
+
+            foreach (var grid in equipment)
+            {
+                var bg = new Image();
+                bg.Source = new BitmapImage(new Uri(appPath + "/Images/equip_bg.png"));
+                bg.Stretch = Stretch.Fill;
+                var label = new Label();
+                Grid.SetRow(label, 0);
+                Grid.SetColumn(label, 0);
+                grid.Children.Add(bg);
+                grid.Children.Add(label);
+
+                label.MouseLeftButtonDown += Inventory_MouseLeftButtonDown;
+                label.MouseLeftButtonUp += Inventory_MouseLeftButtonUp;
+            }
+        }
+
+        private void ChangeZIndex(Grid except, int zIndex)
+        {
+            foreach (var grid in equipment)
+            {
+                if (grid != except)
+                {
+                    Panel.SetZIndex(grid, zIndex);
+                }
+            }
         }
 
         private void Inventory_MouseMove(object sender, MouseEventArgs e)
         {
             if (onMove)
             {
-                TT.X += Mouse.GetPosition(MoveLabel).X - 35;
+                TT.X += Mouse.GetPosition(MoveLabel).X - 27;
                 TT.Y += Mouse.GetPosition(MoveLabel).Y + 1;
             }
         }
 
-        Grid Inventory;
         Label TmpLabel, MoveLabel = new Label();
+        Grid TmpGrid;
         int tmpRow, tmpCol;
         bool onMove = false;
         TranslateTransform TT = new TranslateTransform();
 
         public Grid MakeInventory(int rows, int cols, int width, int height)
         {
+            Grid Inventory;
+
             Inventory = new Grid();
             Inventory.Height = rows * height;
             Inventory.Width = cols * width;
@@ -66,19 +107,11 @@ namespace CaesariumClient.Controls
                 });
             }
 
-            var appPath = Directory.GetCurrentDirectory();
-            appPath = appPath.Substring(0, appPath.Length - 10);
-
-            Inventory.Background = new ImageBrush(new BitmapImage(
-                new Uri(appPath + "/Images/inventory_bg.jpg")));
             return Inventory;
         }
 
         public void FillGrid(Grid grid)
         {
-            var appPath = Directory.GetCurrentDirectory();
-            appPath = appPath.Substring(0, appPath.Length - 10);
-
             var images = new List<ImageBrush>();
             for (var i = 1; i < 6; i++)
             {
@@ -120,6 +153,13 @@ namespace CaesariumClient.Controls
                     items[i, j].MouseLeftButtonDown += Inventory_MouseLeftButtonDown;
                     items[i, j].MouseLeftButtonUp += Inventory_MouseLeftButtonUp;
 
+                    var bg = new Image();
+                    bg.Source = new BitmapImage(new Uri(appPath + "/Images/equip_bg.png"));
+                    bg.Stretch = Stretch.Fill;
+                    Grid.SetRow(bg, i);
+                    Grid.SetColumn(bg, j);
+                    grid.Children.Add(bg);
+
                     Grid.SetRow(items[i, j], i);
                     Grid.SetColumn(items[i, j], j);
                     grid.Children.Add(items[i, j]);
@@ -133,12 +173,14 @@ namespace CaesariumClient.Controls
             {
                 onMove = !onMove;
                 TmpLabel = (Label)sender;
+                TmpGrid = GetChildrenGrid(TmpLabel);
                 TmpLabel.Opacity = 0.5;
                 tmpRow = Grid.GetRow((Label)sender);
                 tmpCol = Grid.GetColumn((Label)sender);
                 MoveLabel.Background = TmpLabel.Background;
                 MoveLabel.RenderTransform = TT;
-                Inventory.Children.Add(MoveLabel);
+                ChangeZIndex(TmpGrid, -5);
+                TmpGrid.Children.Add(MoveLabel);
             }
 
             Inventory_MouseMove(null, e);
@@ -149,24 +191,44 @@ namespace CaesariumClient.Controls
             if (TmpLabel != null)
             {
                 onMove = !onMove;
-                Inventory.Children.Remove(TmpLabel);
+                TmpGrid.Children.Remove(TmpLabel);
                 Grid.SetRow(TmpLabel, Grid.GetRow((Label)sender));
                 Grid.SetColumn(TmpLabel, Grid.GetColumn((Label)sender));
-                Inventory.Children.Remove((Label)sender);
+
+                var destGrid = GetChildrenGrid((Label)sender);
+                if (destGrid != null)
+                {
+                    destGrid.Children.Remove((Label)sender);
+                    destGrid.Children.Add(TmpLabel);
+                }
+
                 TmpLabel.Opacity = 1.0;
-                Inventory.Children.Add(TmpLabel);
                 Grid.SetRow((Label)sender, tmpRow);
                 Grid.SetColumn((Label)sender, tmpCol);
-                if (!Inventory.Children.Contains((Label)sender))
-                    Inventory.Children.Add((Label)sender);
+                if (!TmpGrid.Children.Contains((Label)sender))
+                    TmpGrid.Children.Add((Label)sender);
                 else
                     ((Label)sender).Opacity = 1.0;
 
                 TmpLabel = null;
-                Inventory.Children.Remove(MoveLabel);
+                TmpGrid.Children.Remove(MoveLabel);
+                ChangeZIndex(TmpGrid, 0);
+                
             }
 
             Inventory_MouseMove(null, e);
+        }
+
+
+        private Grid GetChildrenGrid(Label elem)
+        {
+            foreach(var grid in equipment)
+            {
+                if (grid.Children.Contains(elem))
+                    return grid;
+            }
+
+            return null;
         }
 
         public void UserControl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -177,7 +239,7 @@ namespace CaesariumClient.Controls
                 TmpLabel.Opacity = 1.0;
 
                 TmpLabel = null;
-                Inventory.Children.Remove(MoveLabel);
+                TmpGrid.Children.Remove(MoveLabel);
             }
         }
 
@@ -185,6 +247,56 @@ namespace CaesariumClient.Controls
         {
             var window = Window.GetWindow(this);
             window.MouseLeftButtonUp += UserControl_MouseLeftButtonUp;
+            window.MouseMove += Inventory_MouseMove;
+        }
+
+        Image leftChar = new Image();
+        Image leftCharSprites = new Image();
+        Image rightChar = new Image();
+        Image rightCharSprites = new Image();
+        int charPos = 0;
+        private void inventoryBorder_Loaded(object sender, RoutedEventArgs e)
+        {
+            var inventory = MakeInventory(7, 6, 60, 60);
+            FillGrid(inventory);
+            inventory.VerticalAlignment = VerticalAlignment.Top;
+            ((Border)sender).Child = inventory;
+
+            equipment.Add(inventory);
+
+            leftCharSprites.Source = new BitmapImage(new Uri(appPath + "/Images/Objects/skin2.png"));
+            leftChar.Source = new CroppedBitmap(leftCharSprites.Source as BitmapSource,
+                new Int32Rect(0 * 48, 0 * 48, 48, 48));
+            Panel.SetZIndex(leftChar, Panel.GetZIndex(leftCharBorder));
+            //leftCharBorder.Background = new ImageBrush(new BitmapImage(new Uri(appPath + "/Images/char_bg.png")));
+            leftCharBorder.Child = leftChar;
+
+            rightCharSprites.Source = new BitmapImage(new Uri(appPath + "/Images/Objects/skin5.png"));
+            rightChar.Source = new CroppedBitmap(rightCharSprites.Source as BitmapSource,
+                new Int32Rect(0 * 48, 0 * 48, 48, 48));
+            Panel.SetZIndex(rightChar, Panel.GetZIndex(rightCharBorder));
+            //rightCharBorder.Background = new ImageBrush(new BitmapImage(new Uri(appPath + "/Images/char_bg.png")));
+            rightCharBorder.Child = rightChar;
+
+
+            CreateTimer(AnimatePlayers, 120);
+        }
+
+        private void AnimatePlayers(object sender, EventArgs args)
+        {
+            leftChar.Source = new CroppedBitmap(leftCharSprites.Source as BitmapSource,
+                new Int32Rect(charPos * 48, 0 * 48, 48, 48));
+            rightChar.Source = new CroppedBitmap(rightCharSprites.Source as BitmapSource,
+                new Int32Rect(charPos * 48, 0 * 48, 48, 48));
+            charPos = charPos >= 2 ? 0 : charPos + 1;
+        }
+
+        private void CreateTimer(Action<object, EventArgs> action, int milliseconds)
+        {
+            System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+            dispatcherTimer.Tick += new EventHandler(action);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, milliseconds);
+            dispatcherTimer.Start();
         }
     }
 }

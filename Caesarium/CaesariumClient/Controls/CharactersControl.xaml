@@ -4,6 +4,18 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="540" d:DesignWidth="890" Background="Purple" Loaded="UserControl_Loaded">
-    <Grid MouseLeftButtonUp="UserControl_MouseLeftButtonUp"/>
+             d:DesignHeight="540" d:DesignWidth="890" Loaded="UserControl_Loaded">
+    <Grid MouseLeftButtonUp="UserControl_MouseLeftButtonUp">
+        <Border x:Name="inventoryBorder" HorizontalAlignment="Left" Height="461" Margin="462,39,0,0" VerticalAlignment="Top" Width="361" Loaded="inventoryBorder_Loaded" Panel.ZIndex="-1"/>
+        <Border x:Name="leftCharBorder" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="122" Margin="184,38,0,0" VerticalAlignment="Top" Width="96" Panel.ZIndex="-5"/>
+        <Border x:Name="rightCharBorder" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="122" Margin="184,276,0,0" VerticalAlignment="Top" Width="96" Panel.ZIndex="-5"/>
+        <Grid x:Name="leftWeaponGrid" HorizontalAlignment="Left" Height="60" Margin="106,66,0,0" VerticalAlignment="Top" Width="60" RenderTransformOrigin="0.567,1.375" Panel.ZIndex="-1"/>
+        <Grid x:Name="leftArmorGrid" HorizontalAlignment="Left" Height="60" Margin="304,66,0,0" VerticalAlignment="Top" Width="60" RenderTransformOrigin="0.567,1.375" Panel.ZIndex="-1"/>
+        <Grid x:Name="leftBootsGrid" HorizontalAlignment="Left" Height="60" Margin="304,150,0,0" VerticalAlignment="Top" Width="60" RenderTransformOrigin="0.567,1.375" Panel.ZIndex="-1"/>
+        <Grid x:Name="rightWeaponGrid" HorizontalAlignment="Left" Height="60" Margin="106,302,0,0" VerticalAlignment="Top" Width="60" RenderTransformOrigin="0.567,1.375" Panel.ZIndex="-1"/>
+        <Grid x:Name="rightArmorGrid" HorizontalAlignment="Left" Height="60" Margin="304,302,0,0" VerticalAlignment="Top" Width="60" RenderTransformOrigin="0.567,1.375" Panel.ZIndex="-1"/>
+        <Grid x:Name="rightBootsGrid" HorizontalAlignment="Left" Height="60" Margin="304,382,0,0" VerticalAlignment="Top" Width="60" RenderTransformOrigin="0.567,1.375" Panel.ZIndex="-1"/>
+
+
+    </Grid>
 </UserControl>
